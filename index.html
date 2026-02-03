@@ -178,7 +178,7 @@
         <button class="btn-main" onclick="handleAdd()">+ เพิ่มรายการ</button>
 
         <div class="random-container">
-            <label style="color: var(--ios-orange); text-align: center;">🎲 ระบบสุ่มเลขนำโชค</label>
+            <label style="color: var(--ios-orange); text-align: center;">ระบบสุ่มเลขนำโชค</label>
             <select id="randQty" style="margin-bottom: 10px;">
                 <option value="1">สุ่ม 1 รายการ</option>
                 <option value="3">สุ่ม 3 รายการ</option>
@@ -362,14 +362,31 @@
     function showDualMode(n, a) {
         document.getElementById('popContent').innerHTML = `
             <h3 style="text-align:center; margin-bottom:20px;">เลข ${n} (บน+ล่าง) <br><span class="animal-name">${getAnimalName(n)}</span></h3>
+            
             <div class="dual-box">
                 <span class="pop-label" style="color:var(--ios-blue)">ยอดซื้อ "บน"</span>
-                <input type="number" id="amtTop" value="${a > 0 ? a : ''}" placeholder="0">
+                <input type="text" id="amtTop" inputmode="decimal" value="${a > 0 ? a : ''}" placeholder="0" style="text-align:center; font-size:24px;">
+                <div class="quick-scroll" style="margin-top:10px;">
+                    <button class="btn-quick btn-quick-pop" onclick="quick('amtTop', 1000)">1K</button>
+                    <button class="btn-quick btn-quick-pop" onclick="quick('amtTop', 5000)">5K</button>
+                    <button class="btn-quick btn-quick-pop" onclick="quick('amtTop', 10000)">10K</button>
+                    <button class="btn-quick btn-quick-pop" onclick="quick('amtTop', 20000)">20K</button>
+                    <button class="btn-quick btn-quick-pop" onclick="quick('amtTop', 50000)">50K</button>
+                </div>
             </div>
+
             <div class="dual-box">
                 <span class="pop-label" style="color:var(--ios-pink)">ยอดซื้อ "ล่าง"</span>
-                <input type="number" id="amtBottom" value="${a > 0 ? a : ''}" placeholder="0">
+                <input type="text" id="amtBottom" inputmode="decimal" value="${a > 0 ? a : ''}" placeholder="0" style="text-align:center; font-size:24px;">
+                <div class="quick-scroll" style="margin-top:10px;">
+                    <button class="btn-quick btn-quick-pop" onclick="quick('amtBottom', 1000)">1K</button>
+                    <button class="btn-quick btn-quick-pop" onclick="quick('amtBottom', 5000)">5K</button>
+                    <button class="btn-quick btn-quick-pop" onclick="quick('amtBottom', 10000)">10K</button>
+                    <button class="btn-quick btn-quick-pop" onclick="quick('amtBottom', 20000)">20K</button>
+                    <button class="btn-quick btn-quick-pop" onclick="quick('amtBottom', 50000)">50K</button>
+                </div>
             </div>
+
             <button class="btn-submit" onclick="confirmDual('${n}')">เพิ่มทั้งบนและล่าง</button>
             <button class="btn-toggle" style="width:100%; margin-top:15px" onclick="closePop()">ยกเลิก</button>
         `;
@@ -378,7 +395,9 @@
     function confirmDual(n) {
         const t = document.getElementById('amtTop').value;
         const b = document.getElementById('amtBottom').value;
-        if((!t || t <= 0) && (!b || b <= 0)) return showAlert("เตือน", "กรุณาระบุจำนวนเงิน", "warning");
+        // ตรวจสอบข้อมูลก่อนเพิ่ม
+        if((!t || t <= 0) && (!b || b <= 0)) return showAlert("เตือน", "กรุณาระบุจำนวนเงินอย่างน้อยหนึ่งช่อง", "warning");
+        
         if(t > 0) addOrder(n, 'บน', t);
         if(b > 0) addOrder(n, 'ล่าง', b);
         closePop();
