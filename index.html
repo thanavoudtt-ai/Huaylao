@@ -2,12 +2,12 @@
 <html lang="lo">
 <head>
     <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/thanavoudtt-ai/Huaylao/main/icon.png">
-<link rel="apple-touch-icon" sizes="152x152" href="https://raw.githubusercontent.com/thanavoudtt-ai/Huaylao/main/icon.png">
-<link rel="apple-touch-icon" sizes="180x180" href="https://raw.githubusercontent.com/thanavoudtt-ai/Huaylao/main/icon.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="https://raw.githubusercontent.com/thanavoudtt-ai/Huaylao/main/icon.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="https://raw.githubusercontent.com/thanavoudtt-ai/Huaylao/main/icon.png">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="SMART HUAY">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="SMART HUAY">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SMART HUAY - Lao Font Edition</title>
@@ -17,46 +17,33 @@
             --ios-blue: #007AFF; --ios-green: #34C759; --ios-pink: #FF2D55;
             --ios-orange: #FF9500; --bg-gray: #F2F2F7; --glass: rgba(255, 255, 255, 0.9);
         }
-
-        /* เปลี่ยนฟอนต์ทั้งหมดเป็น Noto Sans Lao */
         body, input, select, button, span, div { 
             font-family: 'Noto Sans Lao', sans-serif; 
             -webkit-font-smoothing: antialiased;
         }
-
         body { background: #BDD4E7; margin: 0; display: flex; justify-content: center; min-height: 100vh; }
         #app { width: 100%; max-width: 430px; padding: 15px; box-sizing: border-box; display: flex; flex-direction: column; }
-        
         .card { background: var(--glass); backdrop-filter: blur(20px); border-radius: 25px; padding: 20px; margin-bottom: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.05); }
-        
-        /* ยกเว้น SMART HUAY ที่ใช้ Poppins */
         .brand-title { 
             font-family: 'Poppins', sans-serif; 
             font-size: 32px; font-weight: 800; text-align: center; 
             color: var(--ios-blue); margin: 0 0 15px 0; 
             letter-spacing: -0.5px;
         }
-        
         label { display: block; font-size: 14px; color: #1c1c1e; margin-bottom: 6px; font-weight: 700; }
         input, select { width: 100%; padding: 14px; border-radius: 15px; border: none; background: var(--bg-gray); font-size: 17px; box-sizing: border-box; margin-bottom: 12px; outline: none; font-weight: 600; }
-        
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .btn { border: none; border-radius: 18px; padding: 14px; font-weight: 700; cursor: pointer; font-size: 15px; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        
         .btn-main { background: var(--ios-blue); color: #fff; width: 100%; }
         .btn-outline { background: var(--bg-gray); color: #8e8e93; }
         .btn-outline.active { background: #fff; color: var(--ios-blue); box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
-        
         #list-container { max-height: 320px; overflow-y: auto; padding-right: 5px; }
         .order-row { display: flex; justify-content: space-between; align-items: center; padding: 12px; background: #fff; border-radius: 15px; margin-bottom: 8px; border: 1px solid #f0f0f0; }
-        
         .btn-pay { background: #E5E5EA; color: #3a3a3c; flex: 1; }
         .btn-pay.active { background: var(--ios-green); color: white; }
         .btn-pay.transfer.active { background: #5856D6; color: white; }
-        
         .quick-scroll { display: flex; overflow-x: auto; gap: 8px; padding-bottom: 10px; scrollbar-width: none; }
         .btn-quick { background: #fff; color: var(--ios-blue); padding: 7px 10px; border-radius: 10px; font-weight: 700; border: 1px solid #eee; font-size: 12px; white-space: nowrap; }
-        
         .animal-tag { font-size: 11px; color: #fff; background: var(--ios-orange); padding: 2px 8px; border-radius: 10px; margin-left: 5px; font-weight: 600; }
         .popup-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: none; align-items: flex-end; z-index: 2000; }
         .bottom-sheet { background: #fff; width: 100%; border-radius: 30px 30px 0 0; padding: 25px; box-sizing: border-box; }
@@ -77,8 +64,8 @@
         </div>
 
         <div class="grid">
-            <div><label>ເລກ</label><input type="number" id="num" placeholder="000" oninput="if(this.value.length > 3) this.value = this.value.slice(0, 3);"></div>
-            <div><label>ເງິນ (₭)</label><input type="number" id="amt" placeholder="0"></div>
+            <div><label>ເລກ</label><input type="tel" inputmode="numeric" id="num" placeholder="000" oninput="if(this.value.length > 3) this.value = this.value.slice(0, 3);"></div>
+            <div><label>ເງິນ (₭)</label><input type="tel" inputmode="numeric" id="amt" placeholder="0"></div>
         </div>
         
         <div class="quick-scroll">
@@ -119,7 +106,7 @@
 
 <script>
     let orders = []; let type = 'lao'; let payMethod = 'cash';
-    const animalMap = {"01,41,81":"ປານ້ອຍ","02,42,82":"ຫອຍ","03,43,83":"ຫ່ານ","04,44,84":"ນົກຍູງ","05,45,85":"ສິງ","06,46,86":"ເສືອ","07,47,87":"ໝູ","08,48,88":"ກະຕ່າຍ","09,49,89":"ຄວາຍ","10,50,90":"ນາກນ້ຳ","11,51,91":"ໝາ","12,52,92":"ມ້າ","13,53,93":"ຊ້າງ","14,54,94":"ແມວບ້ານ","15,55,95":"ໜູ","16,56,96":"ເຜິ້ງ","17,57,97":"ນົກຍາງ","18,58,98":"ແມວປ່າ","19,59,99":"ແມງກະເບື້ອ","00,20,60":"ຂີ້ເຂັບ","21,61":"ນົກນາງແອ່ນ","22,62":"ນົກກາງແກ","23,63":"ລິງ","24,64":"ກົບ","25,65":"ແຫຼວ","26,66":"ນາກບິນ","27,67":"ເຕົ່າ","28,68":"ໄກ່","29,69":"ອ່ຽນ","30,70":"ປາໃຫຍ່","31,71":"ກຸ້ງ","32,72":"ງູ","33,73":"ແມງມຸມ","34,74":"ກວາງ","35,75":"ແບ້","36,76":"ເຫງັນ","37,77":"ລິ່ນ","38,78":"ເຫມັນ","39,79":"ກະປູ","40,80":"ນົກອິນຊີ"};
+    const animalMap = {"01,41,81":"ປານ້ອຍ","02,42,82":"ຫອຍ","03,43,83":"ຫ່ານ","04,44,84":"ນົກຍູງ","05,45,85":"ສິງ","06,46,86":"ເສືອ","07,47,87":"ໝູ","08,48,88":"ກະຕ່າຍ","09,49,89":"ຄວາຍ","10,50,90":"ນາກນ້ຳ","11,51,91":"ໝາ","12,52,92":"ມ້າ","13,53,93":"ຊ້າງ","14,54,94":"ແມວບ້ານ","15,55,95":"ໜູ","16,56,96":"ເຜິ້ງ","17,57,97":"ນົກຍາງ","18,58,98":"ແມວປ່າ","19,59,99":"ແມງກະເບື້ອ","00,20,60":"ຂີ້ເຂັບ","21,61":"ນົກນາງແອ່ນ","22,62":"ນົກກາງແก","23,63":"ລິງ","24,64":"ກົບ","25,65":"ແຫຼວ","26,66":"ນາກບິນ","27,67":"ເຕົ່າ","28,68":"ໄກ່","29,69":"ອ່ຽນ","30,70":"ປາໃຫຍ່","31,71":"ກຸ້ງ","32,72":"ງູ","33,73":"ແມງມຸມ","34,74":"ກວາງ","35,75":"ແບ້","36,76":"ເຫງັນ","37,77":"ລິ່ນ","38,78":"ເຫມັນ","39,79":"ກະປູ","40,80":"ນົກອິນຊີ"};
 
     function setType(t) { type = t; document.getElementById('tBtn').classList.toggle('active', t === 'thai'); document.getElementById('lBtn').classList.toggle('active', t === 'lao'); }
     function setPayMethod(m) { payMethod = m; document.getElementById('cashBtn').classList.toggle('active', m === 'cash'); document.getElementById('transBtn').classList.toggle('active', m === 'transfer'); }
@@ -129,7 +116,7 @@
         const n = document.getElementById('num').value; const a = document.getElementById('amt').value;
         if(!n || !a || a <= 0) return alert("ປ້ອນຂໍ້ມູນໃຫ້ຄົບ");
         if(type === 'thai' && n.length === 2) showThaiPopup(n, a); 
-        else addOrder(n, 'ປົກກະຕິ', a);
+        else addOrder(n, 'ປົກກະຕิ', a);
         document.getElementById('num').value = '';
     }
 
@@ -144,8 +131,8 @@
             </div>
             <div id="bIn" style="display:none; border-top:1px solid #eee; padding-top:10px;">
                 <div class="grid">
-                    <div><label>ເງິນບົນ</label><input type="number" id="uA" value="${a}"><div class="quick-scroll">${[1000,5000,10000,50000].map(v=>`<button class="btn-quick" onclick="quick('uA',${v})">+${v/1000}k</button>`).join('')}</div></div>
-                    <div><label>ເງິນລຸ່ມ</label><input type="number" id="lA" value="${a}"><div class="quick-scroll">${[1000,5000,10000,50000].map(v=>`<button class="btn-quick" onclick="quick('lA',${v})">+${v/1000}k</button>`).join('')}</div></div>
+                    <div><label>ເງິນບົນ</label><input type="tel" inputmode="numeric" id="uA" value="${a}"><div class="quick-scroll">${[1000,5000,10000,50000].map(v=>`<button class="btn-quick" onclick="quick('uA',${v})">+${v/1000}k</button>`).join('')}</div></div>
+                    <div><label>ເງິນລຸ່ມ</label><input type="tel" inputmode="numeric" id="lA" value="${a}"><div class="quick-scroll">${[1000,5000,10000,50000].map(v=>`<button class="btn-quick" onclick="quick('lA',${v})">+${v/1000}k</button>`).join('')}</div></div>
                 </div>
                 <button class="btn btn-main" style="background:#5856D6;" onclick="addBoth('${n}')">ຕົກລົງ</button>
             </div>
