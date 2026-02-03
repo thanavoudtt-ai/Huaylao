@@ -11,8 +11,8 @@
             --ios-green: #34C759;
             --ios-pink: #FF2D55;
             --ios-orange: #FF9500;
-            --glass: rgba(255, 255, 255, 0.7);
-            --glass-border: rgba(255, 255, 255, 0.3);
+            --glass: rgba(255, 255, 255, 0.75);
+            --glass-border: rgba(255, 255, 255, 0.4);
         }
 
         body {
@@ -26,18 +26,12 @@
             min-height: 100vh;
         }
 
-        #app {
-            width: 100%;
-            max-width: 430px;
-            padding: 20px 15px;
-            box-sizing: border-box;
-        }
+        #app { width: 100%; max-width: 430px; padding: 20px 15px; box-sizing: border-box; }
 
-        /* Glassmorphism Card */
         .card {
             background: var(--glass);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
             border: 1px solid var(--glass-border);
             border-radius: 28px;
             padding: 24px;
@@ -45,151 +39,62 @@
             box-shadow: 0 8px 32px rgba(0,0,0,0.08);
         }
 
-        h2 {
-            margin-top: 0;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-            text-align: center;
-            font-size: 26px;
-            background: linear-gradient(to right, #007AFF, #5856D6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        label {
-            display: block;
-            font-size: 13px;
-            color: #48484a;
-            margin-bottom: 8px;
-            font-weight: 600;
-            padding-left: 4px;
-        }
+        h2 { margin-top: 0; font-weight: 700; text-align: center; font-size: 26px; background: linear-gradient(to right, #007AFF, #5856D6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        label { display: block; font-size: 13px; color: #48484a; margin-bottom: 8px; font-weight: 600; padding-left: 4px; }
 
         input {
-            width: 100%;
-            padding: 16px;
-            border-radius: 16px;
-            border: 1px solid rgba(0,0,0,0.05);
-            background: rgba(255,255,255,0.5);
-            font-size: 18px;
-            box-sizing: border-box;
-            margin-bottom: 16px;
-            outline: none;
-            transition: all 0.3s;
-            font-family: 'Noto Sans Lao', sans-serif;
+            width: 100%; padding: 16px; border-radius: 16px; border: 1px solid rgba(0,0,0,0.05);
+            background: rgba(255,255,255,0.5); font-size: 18px; box-sizing: border-box; margin-bottom: 16px;
+            outline: none; transition: all 0.3s; font-family: 'Noto Sans Lao', sans-serif;
         }
-
-        input:focus {
-            background: #fff;
-            box-shadow: 0 0 0 4px rgba(0,122,255,0.1);
-            border-color: var(--ios-blue);
-        }
+        input:focus { background: #fff; box-shadow: 0 0 0 4px rgba(0,122,255,0.1); border-color: var(--ios-blue); }
 
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
         .btn {
-            border: none;
-            border-radius: 18px;
-            padding: 16px;
-            font-weight: 700;
-            cursor: pointer;
-            font-size: 16px;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            font-family: 'Noto Sans Lao', sans-serif;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
+            border: none; border-radius: 18px; padding: 16px; font-weight: 700; cursor: pointer;
+            font-size: 16px; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            font-family: 'Noto Sans Lao', sans-serif; display: flex; align-items: center; justify-content: center; gap: 8px;
         }
-
         .btn:active { transform: scale(0.96); opacity: 0.8; }
-
         .btn-main { background: var(--ios-blue); color: #fff; width: 100%; box-shadow: 0 4px 15px rgba(0,122,255,0.3); }
-
         .btn-outline { background: rgba(0,0,0,0.05); color: #3a3a3c; }
         .btn-outline.active { background: #fff; color: var(--ios-blue); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
 
-        /* Quick Scroll */
-        .quick-scroll {
-            display: flex;
-            overflow-x: auto;
-            gap: 10px;
-            padding: 4px 0 16px 0;
-            scrollbar-width: none;
+        .btn-quick {
+            background: rgba(255, 255, 255, 0.4); backdrop-filter: blur(10px); color: var(--ios-blue);
+            padding: 12px 20px; border-radius: 16px; font-weight: 700; border: 1px solid var(--glass-border);
         }
-        .quick-scroll::-webkit-scrollbar { display: none; }
+
+        .quick-scroll { display: flex; overflow-x: auto; gap: 10px; padding: 4px 0 16px 0; scrollbar-width: none; }
+
+        /* --- Custom App Popup (Alert) --- */
+        .alert-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.45); backdrop-filter: blur(8px);
+            display: none; justify-content: center; align-items: center; z-index: 3000;
+        }
+        .alert-card {
+            background: rgba(255, 255, 255, 0.95); width: 300px; border-radius: 28px;
+            padding: 30px 20px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
         
-        /* เพิ่มในส่วน <style> */
-.btn-quick {
-    flex: 0 0 auto;
-    background: rgba(255, 255, 255, 0.4);
-    backdrop-filter: blur(10px);
-    color: var(--ios-blue);
-    padding: 12px 22px;
-    border-radius: 16px;
-    font-weight: 700;
-    border: 1px solid var(--glass-border);
-    transition: all 0.2s;
-}
+        .alert-icon { font-size: 45px; margin-bottom: 15px; display: block; }
+        .alert-title { font-size: 20px; font-weight: 700; margin-bottom: 10px; color: #1c1c1e; }
+        .alert-msg { font-size: 15px; color: #48484a; margin-bottom: 25px; line-height: 1.4; }
 
-.btn-quick:active {
-    background: var(--ios-blue);
-    color: #fff;
-    transform: translateY(-2px);
-}
-
-        /* Order List */
+        /* --- Order row & Sheet --- */
         .order-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 14px;
-            background: rgba(255,255,255,0.4);
-            border-radius: 16px;
-            margin-bottom: 8px;
-            border: 1px solid rgba(255,255,255,0.5);
+            display: flex; justify-content: space-between; align-items: center; padding: 14px;
+            background: rgba(255,255,255,0.4); border-radius: 16px; margin-bottom: 8px; border: 1px solid rgba(255,255,255,0.5);
         }
+        .animal-tag { font-size: 12px; color: #fff; background: var(--ios-orange); padding: 2px 8px; border-radius: 20px; margin-left: 6px; font-weight: 600; }
+        .summary-box { background: rgba(0,0,0,0.03); border-radius: 20px; padding: 16px; margin-top: 15px; }
 
-        .animal-tag {
-            font-size: 12px;
-            color: #fff;
-            background: var(--ios-orange);
-            padding: 2px 8px;
-            border-radius: 20px;
-            margin-left: 6px;
-            font-weight: 600;
-        }
-
-        .summary-box {
-            background: rgba(0,0,0,0.03);
-            border-radius: 20px;
-            padding: 16px;
-            margin-top: 15px;
-        }
-
-        /* Bottom Sheet Popup */
-        .popup-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.3);
-            display: none;
-            align-items: flex-end;
-            z-index: 1000;
-            backdrop-filter: blur(8px);
-        }
-
-        .bottom-sheet {
-            background: rgba(255,255,255,0.9);
-            backdrop-filter: blur(30px);
-            width: 100%;
-            border-radius: 32px 32px 0 0;
-            padding: 30px 24px 50px 24px;
-            box-sizing: border-box;
-            animation: slideUp 0.4s cubic-bezier(0, 0, 0.2, 1);
-        }
-
+        .popup-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.3); display: none; align-items: flex-end; z-index: 2000; backdrop-filter: blur(8px); }
+        .bottom-sheet { background: rgba(255,255,255,0.9); backdrop-filter: blur(30px); width: 100%; border-radius: 32px 32px 0 0; padding: 30px 24px 50px 24px; box-sizing: border-box; animation: slideUp 0.4s cubic-bezier(0, 0, 0.2, 1); }
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-
         .delete-btn { color: var(--ios-pink); font-size: 20px; font-weight: bold; margin-left: 10px; }
     </style>
 </head>
@@ -202,10 +107,10 @@
         <input type="text" id="cust" placeholder="ໃສ່ຊື່ລູກຄ້າ...">
         
         <label>ປະເພດຫວຍ</label>
-        <div class="grid" style="margin-bottom: 20px;">
-            <button id="tBtn" class="btn btn-outline active" onclick="setType('thai')">ຫວຍໄທ</button>
-            <button id="lBtn" class="btn btn-outline" onclick="setType('lao')">ຫວຍລາວ</button>
-        </div>
+<div class="grid" style="margin-bottom: 20px;">
+    <button id="lBtn" class="btn btn-outline active" onclick="setType('lao')">ຫວຍລາວ</button>
+    <button id="tBtn" class="btn btn-outline" onclick="setType('thai')">ຫວຍໄທ</button>
+</div>
 
         <div class="grid">
             <div>
@@ -232,7 +137,6 @@
     <div class="card">
         <label>ລາຍການບິນທັງໝົດ</label>
         <div id="list"></div>
-        
         <div class="summary-box">
             <div style="display:flex; justify-content:space-between; margin-bottom: 8px; font-size: 14px; opacity: 0.7;">
                 <span>🇹🇭: <span id="sumThai">0</span></span>
@@ -253,39 +157,44 @@
     </div>
 </div>
 
+<div id="customAlert" class="alert-overlay">
+    <div class="alert-card">
+        <span id="alertIcon" class="alert-icon"></span>
+        <div id="alertTitle" class="alert-title"></div>
+        <div id="alertMsg" class="alert-msg"></div>
+        <button class="btn btn-main" onclick="hideAlert()">ຕົກລົງ</button>
+    </div>
+</div>
+
 <div id="pop" class="popup-overlay">
     <div class="bottom-sheet" id="popContent"></div>
 </div>
 
 <script>
     let orders = [];
-    let type = 'thai';
+    let type = 'lao'; // ປ່ຽນໃຫ້ເລີ່ມຕົ້ນທີ່ຫວຍລາວ
     let payment = 'Cash';
 
-    const animalMap = {
-        "01,41,81":"ປານ້ອຍ","02,42,82":"ຫອย","03,43,83":"ຫ່ານ","04,44,84":"ນົກຍູງ","05,45,85":"ສິງ",
-        "06,46,86":"ເສືອ","07,47,87":"ໝູ","08,48,88":"ກະຕ່າຍ","09,49,89":"ຄວາຍ","10,50,90":"ນາກນ້ຳ",
-        "11,51,91":"ໝາ","12,52,92":"ມ້າ","13,53,93":"ຊ້າງ","14,54,94":"ແມວບ້ານ","15,55,95":"ໜູ",
-        "16,56,96":"ເຜິ້ງ","17,57,97":"ນົກຍາງ","18,58,98":"ແມວປ່າ","19,59,99":"ແມງກະເບື້ອ","00,20,60":"ຂີ້ເຂັບ",
-        "21,61":"ນົກນາງແອ່ນ","22,62":"ນົກກາງແກ","23,63":"ລິງ","24,64":"ກົບ","25,65":"ແຫຼວ",
-        "26,66":"ນາກບິນ","27,67":"ເຕົ່າ","28,68":"ໄກ່","29,69":"ອ່ຽນ","30,70":"ປາໃຫຍ່",
-        "31,71":"ກຸ້ງ","32,72":"ງູ","33,73":"ແມງມຸມ","34,74":"ກວາງ","35,75":"ແບ້",
-        "36,76":"ເຫງັນ","37,77":"ລິ່ນ","38,78":"ເຫມັນ","39,79":"ກະປູ","40,80":"ນົກອິນຊີ"
-    };
+    const animalMap = {"01,41,81":"ປານ້ອຍ","02,42,82":"ຫອຍ","03,43,83":"ຫ່ານ","04,44,84":"ນົກຍູງ","05,45,85":"ສິງ","06,46,86":"ເສືອ","07,47,87":"ໝູ","08,48,88":"ກະຕ່າຍ","09,49,89":"ຄວາຍ","10,50,90":"ນາກນ້ຳ","11,51,91":"ໝາ","12,52,92":"ມ້າ","13,53,93":"ຊ້າງ","14,54,94":"ແມວບ້ານ","15,55,95":"ໜູ","16,56,96":"ເຜິ້ງ","17,57,97":"ນົກຍາງ","18,58,98":"ແມວປ່າ","19,59,99":"ແມງກະເບື້ອ","00,20,60":"ຂີ້ເຂັບ","21,61":"ນົກນາງແອ່ນ","22,62":"ນົກກາງແກ","23,63":"ລິງ","24,64":"ກົບ","25,65":"ແຫຼວ","26,66":"ນາກບິນ","27,67":"ເຕົ່າ","28,68":"ໄກ່","29,69":"ອ່ຽນ","30,70":"ປາໃຫຍ່","31,71":"ກຸ້ງ","32,72":"ງູ","33,73":"ແມງມຸມ","34,74":"ກວາງ","35,75":"ແບ້","36,76":"ເຫງັນ","37,77":"ລິ່ນ","38,78":"ເຫມັນ","39,79":"ກະປູ","40,80":"ນົກອິນຊີ"};
+
+    // --- ຟັງຊັນ Popup ຂອງແອັບ ---
+    function showAlert(title, msg, type = 'success') {
+        const icons = { success: '✅', error: '❌', warning: '⚠️' };
+        document.getElementById('alertIcon').innerText = icons[type];
+        document.getElementById('alertTitle').innerText = title;
+        document.getElementById('alertMsg').innerText = msg;
+        document.getElementById('customAlert').style.display = 'flex';
+    }
+    function hideAlert() { document.getElementById('customAlert').style.display = 'none'; }
 
     function checkLimit(el) { if(el.value.length > 3) el.value = el.value.slice(0, 3); }
-    // แก้ไขฟังก์ชันกดเงินหน้าหลัก
     function quick(v) { 
         const amtInput = document.getElementById('amt');
-        const currentVal = parseInt(amtInput.value) || 0;
-        amtInput.value = currentVal + v; 
+        amtInput.value = (parseInt(amtInput.value) || 0) + v; 
     }
-    
-    // แก้ไขฟังก์ชันกดเงินใน Popup (บ่น/ลุ่ม)
     function quickPop(id, v) { 
-        const popInput = document.getElementById(id);
-        const currentVal = parseInt(popInput.value) || 0;
-        popInput.value = currentVal + v; 
+        const el = document.getElementById(id);
+        el.value = (parseInt(el.value) || 0) + v; 
     }
 
     function setType(t) {
@@ -303,14 +212,16 @@
     function handleAdd() {
         const n = document.getElementById('num').value;
         const a = document.getElementById('amt').value;
-        if(!n) return alert("ໃສ່ເລກກ່ອນ");
+        if(!n) return showAlert("ແຈ້ງເຕືອນ", "ກະລຸນາໃສ່ເລກກ່ອນ", "warning");
         if(type === 'thai' && n.length === 2) { showThaiPopup(n, a); } 
-        else { if(!a) return alert("ໃສ່ເງິນກ່ອນ"); addOrder(n, 'ປົກກະຕິ', a); }
+        else { 
+            if(!a || a <= 0) return showAlert("ແຈ້ງເຕືອນ", "ກະລຸນາໃສ່ເງິນກ່ອນ", "warning"); 
+            addOrder(n, 'ປົກກະຕິ', a); 
+        }
     }
 
     function showThaiPopup(n, a) {
-        const pop = document.getElementById('pop');
-        pop.style.display = 'flex';
+        document.getElementById('pop').style.display = 'flex';
         document.getElementById('popContent').innerHTML = `
             <h3 style="margin:0 0 20px 0; text-align:center;">ເລກ ${n}: ເລືອກຕຳແໜ່ງ</h3>
             <div class="grid">
@@ -331,24 +242,27 @@
                 <button class="btn-quick" onclick="quickPop('pTop', 1000)">1K</button>
                 <button class="btn-quick" onclick="quickPop('pTop', 5000)">5K</button>
                 <button class="btn-quick" onclick="quickPop('pTop', 10000)">10K</button>
-                <button class="btn-quick" onclick="quickPop('pTop', 50000)">50K</button>
             </div>
-            <label>ລຸ່ມ (Bottom)</label>
+            <label>ລຸ່ມ (Low)</label>
             <input type="number" id="pLow" placeholder="0">
             <div class="quick-scroll">
                 <button class="btn-quick" onclick="quickPop('pLow', 1000)">1K</button>
                 <button class="btn-quick" onclick="quickPop('pLow', 5000)">5K</button>
                 <button class="btn-quick" onclick="quickPop('pLow', 10000)">10K</button>
-                <button class="btn-quick" onclick="quickPop('pTop', 50000)">50K</button>
             </div>
             <button class="btn btn-main" style="margin-top:20px" onclick="confirmBoth('${n}')">ຢືນຢັນ</button>
         `;
     }
 
-    function confirmThai(n, pos, a) { if(a <= 0) return alert("ໃສ່ເງິນກ່ອນ"); addOrder(n, pos, a); closePop(); }
+    function confirmThai(n, pos, a) { 
+        if(a <= 0) return showAlert("ຜິດພາດ", "ກະລຸນາໃສ່ເງິນກ່ອນ", "error"); 
+        addOrder(n, pos, a); closePop(); 
+    }
+    
     function confirmBoth(n) {
         const t = document.getElementById('pTop').value;
         const l = document.getElementById('pLow').value;
+        if(!t && !l) return showAlert("ຜິດພາດ", "ກະລຸນາໃສ່ເງິນຢ່າງໜ້ອຍ 1 ຕຳແໜ່ງ", "error");
         if(t > 0) addOrder(n, 'ບົນ', t);
         if(l > 0) addOrder(n, 'ລຸ່ມ', l);
         closePop();
@@ -359,11 +273,9 @@
         let animal = "";
         const entry = Object.keys(animalMap).find(key => key.split(',').includes(lastTwo));
         if (entry) animal = animalMap[entry];
-
         orders.unshift({ type, number: n, pos, amount: parseInt(a), animal });
         render();
-        document.getElementById('num').value = '';
-        document.getElementById('amt').value = '';
+        document.getElementById('num').value = ''; document.getElementById('amt').value = '';
     }
 
     function render() {
@@ -383,7 +295,7 @@
                 </div>
             </div>`;
         });
-        document.getElementById('list').innerHTML = h || '<p style="text-align:center; opacity:0.5">ບໍ່ມີລายການ</p>';
+        document.getElementById('list').innerHTML = h || '<p style="text-align:center; opacity:0.5">ບໍ່ມີລາຍການ</p>';
         document.getElementById('total').innerText = tTotal.toLocaleString();
         document.getElementById('sumThai').innerText = sThai.toLocaleString();
         document.getElementById('sumLao').innerText = sLao.toLocaleString();
@@ -392,43 +304,24 @@
     function closePop() { document.getElementById('pop').style.display = 'none'; }
 
     function submit() {
-    if (orders.length === 0) return alert("ບິນວ່າງເປົ່າ!");
-    
-    const btn = document.getElementById('submitBtn');
-    btn.disabled = true;
-    btn.innerText = "ກຳລັງບັນທຶກ...";
+        if (orders.length === 0) return showAlert("ແຈ້ງເຕືອນ", "ບິນວ່າງເປົ່າ! ກະລຸນາເພີ່ມລາຍການກ່ອນ", "warning");
+        const btn = document.getElementById('submitBtn');
+        btn.disabled = true; btn.innerText = "ກຳລັງບັນທຶກ...";
 
-    // ลิงก์ Web App URL ของนาย
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzaTsYu51Tjf1W9rltaR5Jb9cdSKUH_-wLESZGOzxo_FHUMotuCG-Wjy_kX-WPrtmSa/exec";
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzaTsYu51Tjf1W9rltaR5Jb9cdSKUH_-wLESZGOzxo_FHUMotuCG-Wjy_kX-WPrtmSa/exec";
+        const payload = { customer: document.getElementById('cust').value || "ທົ່ວໄປ", payment, orders };
 
-    const payload = {
-        customer: document.getElementById('cust').value || "ທົ่วໄປ",
-        payment: payment,
-        orders: orders
-    };
-
-    // ส่งข้อมูลไปที่ Google Apps Script
-    fetch(WEB_APP_URL, {
-        method: "POST",
-        mode: "no-cors", // สำคัญมากเพื่อให้ส่งข้ามโดเมนจาก GitHub ได้
-        cache: "no-cache",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-    })
-    .then(() => {
-        // เนื่องจากเป็น no-cors เราจะไม่ได้รับข้อมูลตอบกลับ แต่ถ้าไม่มี Error คือส่งสำเร็จ
-        alert("✅ ບັນທຶກບິນສຳເລັດ!\nກະລຸນາກວດສອບใน Google Sheets ຫຼື Telegram");
-        orders = [];
-        render(); // ล้างรายการในหน้าจอ
-        btn.disabled = false;
-        btn.innerText = "ຢືນຢັນການຊື້ ✅";
-    })
-    .catch(err => {
-        alert("❌ ເກີດຂໍ້ຜິດພາດ: " + err);
-        btn.disabled = false;
-        btn.innerText = "ຢືນຢັນການຊື້ ✅";
-    });
-}
+        fetch(WEB_APP_URL, { method: "POST", mode: "no-cors", body: JSON.stringify(payload) })
+        .then(() => {
+            showAlert("ບັນທຶກສຳເລັດ", "ຂໍ້ມູນຖືກສົ່ງເຂົ້າ Sheets ແລະ Telegram ແລ້ວ ✅");
+            orders = []; render();
+            btn.disabled = false; btn.innerText = "ຢືນຢັນການຊື້ ✅";
+        })
+        .catch(err => {
+            showAlert("ຜິດພາດ", "ບໍ່ສາມາດເຊື່ອມຕໍ່ກັບ Server ໄດ້: " + err, "error");
+            btn.disabled = false; btn.innerText = "ຢືນຢັນການຊື້ ✅";
+        });
+    }
 </script>
 </body>
 </html>
