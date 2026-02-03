@@ -7,7 +7,6 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="SMART HUAY">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SMART HUAY - Lao Font Edition</title>
@@ -17,19 +16,47 @@
             --ios-blue: #007AFF; --ios-green: #34C759; --ios-pink: #FF2D55;
             --ios-orange: #FF9500; --bg-gray: #F2F2F7; --glass: rgba(255, 255, 255, 0.9);
         }
-        body, input, select, button, span, div { 
-            font-family: 'Noto Sans Lao', sans-serif; 
-            -webkit-font-smoothing: antialiased;
+
+        /* --- สไตล์ Popup (Toast) แก้ไขใหม่ให้กลางจอและ Font เหมือนเพื่อน --- */
+        .toast-msg {
+            position: fixed;
+            top: 50% !important;
+            left: 50% !important;
+            transform: translate(-50%, -50%) scale(0.5); /* เริ่มต้นเล็กๆ */
+            background: rgba(0, 0, 0, 0.85);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 25px;
+            font-family: 'Noto Sans Lao', sans-serif !important; 
+            font-size: 18px;
+            font-weight: 500;
+            z-index: 10000;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            opacity: 0;
+            pointer-events: none;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            min-width: 200px;
+            text-align: center;
+            line-height: 1.4;
         }
-        body { background: #BDD4E7; margin: 0; display: flex; justify-content: center; min-height: 100vh; }
+
+        .toast-msg.show {
+            transform: translate(-50%, -50%) scale(1) !important; /* ขยายมาตรงกลางเป๊ะ */
+            opacity: 1;
+        }
+
+        #toast-icon { font-size: 35px; }
+
+        /* --- สไตล์หลักของแอป --- */
+        body, input, select, button, span, div { font-family: 'Noto Sans Lao', sans-serif; -webkit-font-smoothing: antialiased; }
+        body { background: #BDD4E7; margin: 0; display: flex; justify-content: center; min-height: 100vh; overflow-x: hidden; }
         #app { width: 100%; max-width: 430px; padding: 15px; box-sizing: border-box; display: flex; flex-direction: column; }
         .card { background: var(--glass); backdrop-filter: blur(20px); border-radius: 25px; padding: 20px; margin-bottom: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.05); }
-        .brand-title { 
-            font-family: 'Poppins', sans-serif; 
-            font-size: 32px; font-weight: 800; text-align: center; 
-            color: var(--ios-blue); margin: 0 0 15px 0; 
-            letter-spacing: -0.5px;
-        }
+        .brand-title { font-family: 'Poppins', sans-serif; font-size: 32px; font-weight: 800; text-align: center; color: var(--ios-blue); margin: 0 0 15px 0; letter-spacing: -0.5px; }
         label { display: block; font-size: 14px; color: #1c1c1e; margin-bottom: 6px; font-weight: 700; }
         input, select { width: 100%; padding: 14px; border-radius: 15px; border: none; background: var(--bg-gray); font-size: 17px; box-sizing: border-box; margin-bottom: 12px; outline: none; font-weight: 600; }
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
@@ -57,17 +84,14 @@
         <h1 class="brand-title">SMART HUAY</h1>
         <label>ຊື່ລູກຄ້າ</label>
         <input type="text" id="cust" placeholder="ໃສ່ຊື່ລູກຄ້າ...">
-        
         <div class="grid" style="margin-bottom: 10px;">
             <button id="lBtn" class="btn btn-outline active" onclick="setType('lao')">ຫວຍລາວ</button>
             <button id="tBtn" class="btn btn-outline" onclick="setType('thai')">ຫວຍໄທ</button>
         </div>
-
         <div class="grid">
             <div><label>ເລກ</label><input type="tel" inputmode="numeric" id="num" placeholder="000" oninput="if(this.value.length > 3) this.value = this.value.slice(0, 3);"></div>
             <div><label>ເງິນ (₭)</label><input type="tel" inputmode="numeric" id="amt" placeholder="0"></div>
         </div>
-        
         <div class="quick-scroll">
             <button class="btn-quick" onclick="quick('amt', 1000)">1,000</button>
             <button class="btn-quick" onclick="quick('amt', 5000)">5,000</button>
@@ -75,20 +99,17 @@
             <button class="btn-quick" onclick="quick('amt', 20000)">20,000</button>
             <button class="btn-quick" onclick="quick('amt', 50000)">50,000</button>
         </div>
-
         <div style="display: flex; gap: 8px; margin-bottom: 10px;">
             <select id="randQty" style="width: 100px; margin-bottom:0;"><option value="1">1 ຊຸດ</option><option value="5">5 ຊຸດ</option><option value="10">10 ຊຸດ</option></select>
-            <button class="btn btn-outline" style="flex:1; background:#ddd; color:#333;" onclick="randomNum(2)">🎲 2 ໂຕ</button>
-            <button class="btn btn-outline" style="flex:1; background:#ddd; color:#333;" onclick="randomNum(3)">🎲 3 ໂຕ</button>
+            <button class="btn btn-outline" style="flex:1; background:#ddd; color:#333;" onclick="randomNum(2)">ສຸ່ມເລກ 2 ໂຕ</button>
+            <button class="btn btn-outline" style="flex:1; background:#ddd; color:#333;" onclick="randomNum(3)">ສຸ່ມເລກ 3 ໂຕ</button>
         </div>
         <button class="btn btn-main" onclick="handleAdd()">+ ເພີ່ມລາຍການ</button>
     </div>
 
     <div class="card">
         <label>ລາຍການບິນທັງໝົດ</label>
-        <div id="list-container">
-            <div id="list"></div>
-        </div>
+        <div id="list-container"><div id="list"></div></div>
         <div id="total-box">ລວມ: <span id="total">0</span> ₭</div>
     </div>
 
@@ -100,13 +121,28 @@
         </div>
         <button class="btn btn-main" style="background:var(--ios-green); font-size:18px;" onclick="submitBill()">ຢືນຢັນການຊື້ຫວຍ</button>
     </div>
+
+    <div id="toast" class="toast-msg">
+        <span id="toast-icon">✅</span>
+        <span id="toast-text">ຂໍ້ຄວາມ</span>
+    </div>
 </div>
 
 <div id="pop" class="popup-overlay"><div class="bottom-sheet" id="popContent"></div></div>
 
 <script>
     let orders = []; let type = 'lao'; let payMethod = 'cash';
-    const animalMap = {"01,41,81":"ປານ້ອຍ","02,42,82":"ຫອຍ","03,43,83":"ຫ່ານ","04,44,84":"ນົກຍູງ","05,45,85":"ສິງ","06,46,86":"ເສືອ","07,47,87":"ໝູ","08,48,88":"ກະຕ່າຍ","09,49,89":"ຄວາຍ","10,50,90":"ນາກນ້ຳ","11,51,91":"ໝາ","12,52,92":"ມ້າ","13,53,93":"ຊ້າງ","14,54,94":"ແມວບ້ານ","15,55,95":"ໜູ","16,56,96":"ເຜິ້ງ","17,57,97":"ນົກຍາງ","18,58,98":"ແມວປ່າ","19,59,99":"ແມງກະເບື້ອ","00,20,60":"ຂີ້ເຂັບ","21,61":"ນົກນາງແອ່ນ","22,62":"ນົກກາງແก","23,63":"ລິງ","24,64":"ກົບ","25,65":"ແຫຼວ","26,66":"ນາກບິນ","27,67":"ເຕົ່າ","28,68":"ໄກ່","29,69":"ອ່ຽນ","30,70":"ປາໃຫຍ່","31,71":"ກຸ້ງ","32,72":"ງູ","33,73":"ແມງມຸມ","34,74":"ກວາງ","35,75":"ແບ້","36,76":"ເຫງັນ","37,77":"ລິ່ນ","38,78":"ເຫມັນ","39,79":"ກະປູ","40,80":"ນົກອິນຊີ"};
+    const animalMap = {"01,41,81":"ປານ້ອຍ","02,42,82":"ຫອย","03,43,83":"ຫ່ານ","04,44,84":"ນົກຍູງ","05,45,85":"ສິງ","06,46,86":"ເສືອ","07,47,87":"ໝູ","08,48,88":"ກະຕ່າຍ","09,49,89":"ຄວາຍ","10,50,90":"ນາກນ້ຳ","11,51,91":"ໝາ","12,52,92":"ມ້າ","13,53,93":"ຊ້າງ","14,54,94":"ແມວບ້ານ","15,55,95":"ໜູ","16,56,96":"ເຜິ້ງ","17,57,97":"ນົກຍາງ","18,58,98":"ແມວປ່າ","19,59,99":"ແມງກະເບື້ອ","00,20,60":"ຂີ້ເຂັບ","21,61":"ນົກນາງແອ່ນ","22,62":"ນົກກາງແກ","23,63":"ລິງ","24,64":"ກົບ","25,65":"ແຫຼວ","26,66":"ນາກບິນ","27,67":"ເຕົ່າ","28,68":"ໄກ່","29,69":"ອ່ຽນ","30,70":"ປາໃຫຍ່","31,71":"ກຸ້ງ","32,72":"ງູ","33,73":"ແມງມຸມ","34,74":"ກວາງ","35,75":"ແບ້","36,76":"ເຫງັນ","37,77":"ລິ່ນ","38,78":"ເຫມັນ","39,79":"ກະປູ","40,80":"ນົກອິນຊີ"};
+
+    function showToast(msg, icon = '✅') {
+        const toast = document.getElementById('toast');
+        const toastText = document.getElementById('toast-text');
+        const toastIcon = document.getElementById('toast-icon');
+        toastText.innerText = msg;
+        toastIcon.innerText = icon;
+        toast.classList.add('show');
+        setTimeout(() => { toast.classList.remove('show'); }, 1500);
+    }
 
     function setType(t) { type = t; document.getElementById('tBtn').classList.toggle('active', t === 'thai'); document.getElementById('lBtn').classList.toggle('active', t === 'lao'); }
     function setPayMethod(m) { payMethod = m; document.getElementById('cashBtn').classList.toggle('active', m === 'cash'); document.getElementById('transBtn').classList.toggle('active', m === 'transfer'); }
@@ -114,9 +150,9 @@
 
     function handleAdd() {
         const n = document.getElementById('num').value; const a = document.getElementById('amt').value;
-        if(!n || !a || a <= 0) return alert("ປ້ອນຂໍ້ມູນໃຫ້ຄົບ");
+        if(!n || !a || a <= 0) return showToast("ປ້ອນຂໍ້ມູນໃຫ້ຄົບ!", "⚠️");
         if(type === 'thai' && n.length === 2) showThaiPopup(n, a); 
-        else addOrder(n, 'ປົກກະຕิ', a);
+        else addOrder(n, 'ປົກກະຕິ', a);
         document.getElementById('num').value = '';
     }
 
@@ -142,13 +178,14 @@
     function addBoth(n) { const u = document.getElementById('uA').value; const l = document.getElementById('lA').value; if(u > 0) addOrder(n, 'ບົນ', u); if(l > 0) addOrder(n, 'ລຸ່ມ', l); closePop(); }
 
     function randomNum(digit) {
-        if (type === 'thai' && digit === 2) return alert("⚠️ ຫວຍໄທ 2 ໂຕ ບໍ່ອະນຸຍາດໃຫ້ສຸ່ມ!");
+        if (type === 'thai' && digit === 2) return showToast("ຫວຍໄທ 2 ໂຕ ສຸ່ມບໍ່ໄດ້!", "⚠️");
         const amt = document.getElementById('amt').value; const qty = parseInt(document.getElementById('randQty').value);
-        if (!amt || amt <= 0) return alert("ໃສ່ເງິນກ່ອນສຸ່ມ");
+        if (!amt || amt <= 0) return showToast("ໃສ່ເງິນກ່ອນສຸ່ມ!", "💰");
         for (let i = 0; i < qty; i++) {
             let rand = Math.floor(Math.random() * (digit === 2 ? 100 : 1000)).toString().padStart(digit, '0');
             addOrder(rand, 'ປົກກະຕິ', amt);
         }
+        showToast(`ສຸ່ມสำเร็จ ${qty} รายการ`, "🎲");
     }
 
     function addOrder(n, pos, a) {
@@ -168,7 +205,11 @@
         document.getElementById('total').innerText = t.toLocaleString();
     }
 
-    function submitBill() { if(orders.length === 0) return alert("ກະລຸນາເພີ່ມລາຍການ!"); alert(`ບັນທຶກສຳເລັດ! ຮູບແບບ: ${payMethod === 'cash' ? 'ເງິນສົດ' : 'ໂອນ'}`); orders = []; render(); }
+    function submitBill() { 
+        if(orders.length === 0) return showToast("ກະລຸນາເພີ່ມລາຍການ!", "⚠️"); 
+        showToast(`ບັນທຶກສຳເລັດ! (${payMethod === 'cash' ? 'ເງິນສົດ' : 'ໂອນ'})`, "🚀");
+        orders = []; render(); 
+    }
     function closePop() { document.getElementById('pop').style.display = 'none'; }
     render();
 </script>
