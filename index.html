@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="lo">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Lotto Pro iOS 26</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Lao:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ios-blue: #007AFF;
+            --ios-green: #34C759;
+            --ios-pink: #FF2D55;
+            --ios-orange: #FF9500;
+            --glass: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.3);
+        }
+
+        body {
+            font-family: 'Noto Sans Lao', sans-serif;
+            background: linear-gradient(135deg, #a2c2e6 0%, #d1e1f0 100%);
+            background-attachment: fixed;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            color: #1c1c1e;
+            min-height: 100vh;
+        }
+
+        #app {
+            width: 100%;
+            max-width: 430px;
+            padding: 20px 15px;
+            box-sizing: border-box;
+        }
+
+        /* Glassmorphism Card */
+        .card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+        }
+
+        h2 {
+            margin-top: 0;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            text-align: center;
+            font-size: 26px;
+            background: linear-gradient(to right, #007AFF, #5856D6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            color: #48484a;
+            margin-bottom: 8px;
+            font-weight: 600;
+            padding-left: 4px;
+        }
+
+        input {
+            width: 100%;
+            padding: 16px;
+            border-radius: 16px;
+            border: 1px solid rgba(0,0,0,0.05);
+            background: rgba(255,255,255,0.5);
+            font-size: 18px;
+            box-sizing: border-box;
+            margin-bottom: 16px;
+            outline: none;
+            transition: all 0.3s;
+            font-family: 'Noto Sans Lao', sans-serif;
+        }
+
+        input:focus {
+            background: #fff;
+            box-shadow: 0 0 0 4px rgba(0,122,255,0.1);
+            border-color: var(--ios-blue);
+        }
+
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+        .btn {
+            border: none;
+            border-radius: 18px;
+            padding: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            font-family: 'Noto Sans Lao', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn:active { transform: scale(0.96); opacity: 0.8; }
+
+        .btn-main { background: var(--ios-blue); color: #fff; width: 100%; box-shadow: 0 4px 15px rgba(0,122,255,0.3); }
+
+        .btn-outline { background: rgba(0,0,0,0.05); color: #3a3a3c; }
+        .btn-outline.active { background: #fff; color: var(--ios-blue); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+
+        /* Quick Scroll */
+        .quick-scroll {
+            display: flex;
+            overflow-x: auto;
+            gap: 10px;
+            padding: 4px 0 16px 0;
+            scrollbar-width: none;
+        }
+        .quick-scroll::-webkit-scrollbar { display: none; }
+        
+        /* เพิ่มในส่วน <style> */
+.btn-quick {
+    flex: 0 0 auto;
+    background: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(10px);
+    color: var(--ios-blue);
+    padding: 12px 22px;
+    border-radius: 16px;
+    font-weight: 700;
+    border: 1px solid var(--glass-border);
+    transition: all 0.2s;
+}
+
+.btn-quick:active {
+    background: var(--ios-blue);
+    color: #fff;
+    transform: translateY(-2px);
+}
+
+        /* Order List */
+        .order-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px;
+            background: rgba(255,255,255,0.4);
+            border-radius: 16px;
+            margin-bottom: 8px;
+            border: 1px solid rgba(255,255,255,0.5);
+        }
+
+        .animal-tag {
+            font-size: 12px;
+            color: #fff;
+            background: var(--ios-orange);
+            padding: 2px 8px;
+            border-radius: 20px;
+            margin-left: 6px;
+            font-weight: 600;
+        }
+
+        .summary-box {
+            background: rgba(0,0,0,0.03);
+            border-radius: 20px;
+            padding: 16px;
+            margin-top: 15px;
+        }
+
+        /* Bottom Sheet Popup */
+        .popup-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.3);
+            display: none;
+            align-items: flex-end;
+            z-index: 1000;
+            backdrop-filter: blur(8px);
+        }
+
+        .bottom-sheet {
+            background: rgba(255,255,255,0.9);
+            backdrop-filter: blur(30px);
+            width: 100%;
+            border-radius: 32px 32px 0 0;
+            padding: 30px 24px 50px 24px;
+            box-sizing: border-box;
+            animation: slideUp 0.4s cubic-bezier(0, 0, 0.2, 1);
+        }
+
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+        .delete-btn { color: var(--ios-pink); font-size: 20px; font-weight: bold; margin-left: 10px; }
+    </style>
+</head>
+<body>
+
+<div id="app">
+    <div class="card">
+        <h2>Lotto Pro 2026</h2>
+        <label>ຊື່ລູກຄ້າ</label>
+        <input type="text" id="cust" placeholder="ໃສ່ຊື່ລູກຄ້າ...">
+        
+        <label>ປະເພດຫວຍ</label>
+        <div class="grid" style="margin-bottom: 20px;">
+            <button id="tBtn" class="btn btn-outline active" onclick="setType('thai')">ຫວຍໄທ</button>
+            <button id="lBtn" class="btn btn-outline" onclick="setType('lao')">ຫວຍລາວ</button>
+        </div>
+
+        <div class="grid">
+            <div>
+                <label>ເລກ</label>
+                <input type="number" id="num" placeholder="000" oninput="checkLimit(this)">
+            </div>
+            <div>
+                <label>ເງິນ (₭)</label>
+                <input type="number" id="amt" placeholder="0">
+            </div>
+        </div>
+        
+        <div class="quick-scroll">
+            <button class="btn-quick" onclick="quick(1000)">1K</button>
+            <button class="btn-quick" onclick="quick(5000)">5K</button>
+            <button class="btn-quick" onclick="quick(10000)">10K</button>
+            <button class="btn-quick" onclick="quick(20000)">20K</button>
+            <button class="btn-quick" onclick="quick(50000)">50K</button>
+        </div>
+
+        <button class="btn btn-main" onclick="handleAdd()">+ ເພີ່ມລາຍການ</button>
+    </div>
+
+    <div class="card">
+        <label>ລາຍການບິນທັງໝົດ</label>
+        <div id="list"></div>
+        
+        <div class="summary-box">
+            <div style="display:flex; justify-content:space-between; margin-bottom: 8px; font-size: 14px; opacity: 0.7;">
+                <span>🇹🇭: <span id="sumThai">0</span></span>
+                <span>🇱🇦: <span id="sumLao">0</span></span>
+            </div>
+            <div style="text-align: right; font-size: 22px; font-weight: 700; color: var(--ios-pink);">
+                <small style="font-size: 14px; color: #1c1c1e;">ລວມ:</small> <span id="total">0</span> ₭
+            </div>
+        </div>
+    </div>
+
+    <div class="card" style="padding: 10px;">
+        <div class="grid">
+            <button id="cashBtn" class="btn btn-outline active" onclick="setPay('Cash')">ແບບງິນສົດ</button>
+            <button id="bankBtn" class="btn btn-outline" onclick="setPay('Transfer')">ແບບໂອນ</button>
+        </div>
+        <button id="submitBtn" class="btn btn-main" style="background: var(--ios-green); margin-top:12px;" onclick="submit()">ຢືນຢັນການຊື້</button>
+    </div>
+</div>
+
+<div id="pop" class="popup-overlay">
+    <div class="bottom-sheet" id="popContent"></div>
+</div>
+
+<script>
+    let orders = [];
+    let type = 'thai';
+    let payment = 'Cash';
+
+    const animalMap = {
+        "01,41,81":"ປານ້ອຍ","02,42,82":"ຫອย","03,43,83":"ຫ່ານ","04,44,84":"ນົກຍູງ","05,45,85":"ສິງ",
+        "06,46,86":"ເສືອ","07,47,87":"ໝູ","08,48,88":"ກະຕ່າຍ","09,49,89":"ຄວາຍ","10,50,90":"ນາກນ້ຳ",
+        "11,51,91":"ໝາ","12,52,92":"ມ້າ","13,53,93":"ຊ້າງ","14,54,94":"ແມວບ້ານ","15,55,95":"ໜູ",
+        "16,56,96":"ເຜິ້ງ","17,57,97":"ນົກຍາງ","18,58,98":"ແມວປ່າ","19,59,99":"ແມງກະເບື້ອ","00,20,60":"ຂີ້ເຂັບ",
+        "21,61":"ນົກນາງແອ່ນ","22,62":"ນົກກາງແກ","23,63":"ລິງ","24,64":"ກົບ","25,65":"ແຫຼວ",
+        "26,66":"ນາກບິນ","27,67":"ເຕົ່າ","28,68":"ໄກ່","29,69":"ອ່ຽນ","30,70":"ປາໃຫຍ່",
+        "31,71":"ກຸ້ງ","32,72":"ງູ","33,73":"ແມງມຸມ","34,74":"ກວາງ","35,75":"ແບ້",
+        "36,76":"ເຫງັນ","37,77":"ລິ່ນ","38,78":"ເຫມັນ","39,79":"ກະປູ","40,80":"ນົກອິນຊີ"
+    };
+
+    function checkLimit(el) { if(el.value.length > 3) el.value = el.value.slice(0, 3); }
+    // แก้ไขฟังก์ชันกดเงินหน้าหลัก
+    function quick(v) { 
+        const amtInput = document.getElementById('amt');
+        const currentVal = parseInt(amtInput.value) || 0;
+        amtInput.value = currentVal + v; 
+    }
+    
+    // แก้ไขฟังก์ชันกดเงินใน Popup (บ่น/ลุ่ม)
+    function quickPop(id, v) { 
+        const popInput = document.getElementById(id);
+        const currentVal = parseInt(popInput.value) || 0;
+        popInput.value = currentVal + v; 
+    }
+
+    function setType(t) {
+        type = t;
+        document.getElementById('tBtn').classList.toggle('active', t === 'thai');
+        document.getElementById('lBtn').classList.toggle('active', t === 'lao');
+    }
+
+    function setPay(p) {
+        payment = p;
+        document.getElementById('cashBtn').classList.toggle('active', p === 'Cash');
+        document.getElementById('bankBtn').classList.toggle('active', p === 'Transfer');
+    }
+
+    function handleAdd() {
+        const n = document.getElementById('num').value;
+        const a = document.getElementById('amt').value;
+        if(!n) return alert("ໃສ່ເລກກ່ອນ");
+        if(type === 'thai' && n.length === 2) { showThaiPopup(n, a); } 
+        else { if(!a) return alert("ໃສ່ເງິນກ່ອນ"); addOrder(n, 'ປົກກະຕິ', a); }
+    }
+
+    function showThaiPopup(n, a) {
+        const pop = document.getElementById('pop');
+        pop.style.display = 'flex';
+        document.getElementById('popContent').innerHTML = `
+            <h3 style="margin:0 0 20px 0; text-align:center;">ເລກ ${n}: ເລືອກຕຳແໜ່ງ</h3>
+            <div class="grid">
+                <button class="btn btn-main" onclick="confirmThai('${n}', 'ບົນ', ${a || 0})">ຊື້ບົນ</button>
+                <button class="btn btn-main" style="background:var(--ios-pink)" onclick="confirmThai('${n}', 'ລຸ່ມ', ${a || 0})">ຊື້ລຸ່ມ</button>
+            </div>
+            <button class="btn btn-outline" style="width:100%; margin-top:12px; background:var(--ios-orange); color:#fff" onclick="stepTwoBoth('${n}')">ຊື້ ບົນ+ລຸ່ມ</button>
+            <button class="btn btn-outline" style="width:100%; margin-top:12px" onclick="closePop()">ຍົກເລີກ</button>
+        `;
+    }
+
+    function stepTwoBoth(n) {
+        document.getElementById('popContent').innerHTML = `
+            <h3 style="margin:0 0 20px 0; text-align:center;">ເລກ ${n}: ໃສ່ເງິນແຍກ</h3>
+            <label>ບົນ (Top)</label>
+            <input type="number" id="pTop" placeholder="0">
+            <div class="quick-scroll">
+                <button class="btn-quick" onclick="quickPop('pTop', 1000)">1K</button>
+                <button class="btn-quick" onclick="quickPop('pTop', 5000)">5K</button>
+                <button class="btn-quick" onclick="quickPop('pTop', 10000)">10K</button>
+                <button class="btn-quick" onclick="quickPop('pTop', 50000)">50K</button>
+            </div>
+            <label>ລຸ່ມ (Bottom)</label>
+            <input type="number" id="pLow" placeholder="0">
+            <div class="quick-scroll">
+                <button class="btn-quick" onclick="quickPop('pLow', 1000)">1K</button>
+                <button class="btn-quick" onclick="quickPop('pLow', 5000)">5K</button>
+                <button class="btn-quick" onclick="quickPop('pLow', 10000)">10K</button>
+                <button class="btn-quick" onclick="quickPop('pTop', 50000)">50K</button>
+            </div>
+            <button class="btn btn-main" style="margin-top:20px" onclick="confirmBoth('${n}')">ຢືນຢັນ</button>
+        `;
+    }
+
+    function confirmThai(n, pos, a) { if(a <= 0) return alert("ໃສ່ເງິນກ່ອນ"); addOrder(n, pos, a); closePop(); }
+    function confirmBoth(n) {
+        const t = document.getElementById('pTop').value;
+        const l = document.getElementById('pLow').value;
+        if(t > 0) addOrder(n, 'ບົນ', t);
+        if(l > 0) addOrder(n, 'ລຸ່ມ', l);
+        closePop();
+    }
+
+    function addOrder(n, pos, a) {
+        const lastTwo = n.slice(-2).padStart(2, '0');
+        let animal = "";
+        const entry = Object.keys(animalMap).find(key => key.split(',').includes(lastTwo));
+        if (entry) animal = animalMap[entry];
+
+        orders.unshift({ type, number: n, pos, amount: parseInt(a), animal });
+        render();
+        document.getElementById('num').value = '';
+        document.getElementById('amt').value = '';
+    }
+
+    function render() {
+        let h = ''; let tTotal = 0; let sThai = 0; let sLao = 0;
+        orders.forEach((item, i) => {
+            tTotal += item.amount;
+            if(item.type === 'thai') sThai += item.amount; else sLao += item.amount;
+            h += `<div class="order-row">
+                <div>
+                    <span style="font-size:18px; font-weight:700">${item.number}</span>
+                    ${item.animal ? `<span class="animal-tag">${item.animal}</span>`:''}
+                    <div style="font-size:11px; color:#8e8e93; font-weight:600">${item.pos} | ${item.type.toUpperCase()}</div>
+                </div>
+                <div style="display:flex; align-items:center">
+                    <span style="font-weight:700">${item.amount.toLocaleString()} ₭</span>
+                    <span class="delete-btn" onclick="orders.splice(${i},1);render()">✕</span>
+                </div>
+            </div>`;
+        });
+        document.getElementById('list').innerHTML = h || '<p style="text-align:center; opacity:0.5">ບໍ່ມີລายການ</p>';
+        document.getElementById('total').innerText = tTotal.toLocaleString();
+        document.getElementById('sumThai').innerText = sThai.toLocaleString();
+        document.getElementById('sumLao').innerText = sLao.toLocaleString();
+    }
+
+    function closePop() { document.getElementById('pop').style.display = 'none'; }
+
+    function submit() {
+        if(orders.length === 0) return alert("ບິນວ່າງເປົ່າ!");
+        const btn = document.getElementById('submitBtn');
+        btn.disabled = true; btn.innerText = "ກຳລັງບັນທຶກ...";
+        google.script.run.withSuccessHandler(() => {
+            alert("✅ ບັນທຶກບິນສຳເລັດ!");
+            orders = []; render();
+            btn.disabled = false; btn.innerText = "ຢືນຢັນການຊື້";
+        }).processOrder({ customer: document.getElementById('cust').value || "ທົ່ວໄປ", payment, orders });
+    }
+</script>
+</body>
+</html>
