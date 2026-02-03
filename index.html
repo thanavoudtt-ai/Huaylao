@@ -392,15 +392,43 @@
     function closePop() { document.getElementById('pop').style.display = 'none'; }
 
     function submit() {
-        if(orders.length === 0) return alert("ບິນວ່າງເປົ່າ!");
-        const btn = document.getElementById('submitBtn');
-        btn.disabled = true; btn.innerText = "ກຳລັງບັນທຶກ...";
-        google.script.run.withSuccessHandler(() => {
-            alert("✅ ບັນທຶກບິນສຳເລັດ!");
-            orders = []; render();
-            btn.disabled = false; btn.innerText = "ຢືນຢັນການຊື້";
-        }).processOrder({ customer: document.getElementById('cust').value || "ທົ່ວໄປ", payment, orders });
-    }
+    if (orders.length === 0) return alert("ບິນວ່າງເປົ່າ!");
+    
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.innerText = "ກຳລັງບັນທຶກ...";
+
+    // ลิงก์ Web App URL ของนาย
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzaTsYu51Tjf1W9rltaR5Jb9cdSKUH_-wLESZGOzxo_FHUMotuCG-Wjy_kX-WPrtmSa/exec";
+
+    const payload = {
+        customer: document.getElementById('cust').value || "ທົ่วໄປ",
+        payment: payment,
+        orders: orders
+    };
+
+    // ส่งข้อมูลไปที่ Google Apps Script
+    fetch(WEB_APP_URL, {
+        method: "POST",
+        mode: "no-cors", // สำคัญมากเพื่อให้ส่งข้ามโดเมนจาก GitHub ได้
+        cache: "no-cache",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+    })
+    .then(() => {
+        // เนื่องจากเป็น no-cors เราจะไม่ได้รับข้อมูลตอบกลับ แต่ถ้าไม่มี Error คือส่งสำเร็จ
+        alert("✅ ບັນທຶກບິນສຳເລັດ!\nກະລຸນາກວດສອບใน Google Sheets ຫຼື Telegram");
+        orders = [];
+        render(); // ล้างรายการในหน้าจอ
+        btn.disabled = false;
+        btn.innerText = "ຢືນຢັນການຊື້ ✅";
+    })
+    .catch(err => {
+        alert("❌ ເກີດຂໍ້ຜິດພາດ: " + err);
+        btn.disabled = false;
+        btn.innerText = "ຢືນຢັນການຊື້ ✅";
+    });
+}
 </script>
 </body>
 </html>
