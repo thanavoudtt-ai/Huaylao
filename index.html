@@ -531,9 +531,19 @@
         }
     }
 
+    // Temporary storage for receipt data (persists after orders are cleared)
+    let receiptData = null;
+
     /** Show receipt popup with order summary */
     function showOrderReceipt() {
         if (orders.length === 0) return;
+
+        // Save order data to receiptData so copy button can still access it
+        receiptData = {
+            orders: JSON.parse(JSON.stringify(orders)),
+            customer: document.getElementById('cust').value || 'ทั่วไป',
+            payment: payment
+        };
 
         let html = `<div class="receipt-items">`;
         let tTotal = 0;
@@ -570,55 +580,74 @@
 
     /** Copy receipt to WhatsApp from the receipt modal */
     function copyReceiptToWhatsApp() {
-        if (orders.length === 0) return;
+        if (!receiptData || receiptData.orders.length === 0) {
+            showAlert('แจ้งเตือน', 'ไม่มีรายการที่จะคัดลอก', 'warning');
+            return;
+        }
 
         try {
             const lines = [];
             lines.push('🔔 รายการสั่งซื้อใหม่');
-            lines.push(`👤 ลูกค้า: ${document.getElementById('cust').value || 'ทั่วไป'}`);
+            lines.push(`👤 ลูกค้า: ${receiptData.customer}`);
             lines.push('─────────────');
             lines.push('เลข  │ หวย │ ชุด  │ จำนวน');
             lines.push('─────────────');
 
-            orders.forEach(item => {
+            receiptData.orders.forEach(item => {
                 const icon = item.type === 'thai' ? '🇹🇭' : '🇱🇦';
                 const numPad = item.number.padEnd(4);
                 const posPad = item.position.padEnd(4);
                 lines.push(`${numPad} | ${icon} | ${posPad} | ${item.amount.toLocaleString()}`);
             });
 
-            const tTotal = orders.reduce((s, it) => s + it.amount, 0);
+            const tTotal = receiptData.orders.reduce((s, it) => s + it.amount, 0);
             lines.push('─────────────');
             lines.push('');
             lines.push(`💰 รวมเงิน: ${tTotal.toLocaleString()} ₭`);
-            lines.push(`💳 ชำระ: ${payment === 'Cash' ? 'เงินสด' : 'โอนเงิน'}`);
+            lines.push(`💳 ชำระ: ${receiptData.payment === 'Cash' ? 'เงินสด' : 'โอนเงิน'}`);
             lines.push(`⏰ เวลา: ${new Date().toLocaleString('th-TH')}`);
 
             const text = lines.join('\n');
 
-            if (navigator.clipboard && navigator.clipboard.writeText) {
+            // Try modern clipboard API first (secure contexts only)
+            if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
                 navigator.clipboard.writeText(text).then(() => {
                     showAlert('สำเร็จ', 'คัดลอกแล้ว! พร้อมวางใน WhatsApp 📱', 'success');
                 }).catch(err => {
-                    const ta = document.createElement('textarea');
-                    ta.value = text;
-                    document.body.appendChild(ta);
-                    ta.select();
-                    document.execCommand('copy');
-                    document.body.removeChild(ta);
-                    showAlert('สำเร็จ', 'คัดลอกแล้ว! พร้อมวางใน WhatsApp 📱', 'success');
+                    console.error('Clipboard API failed:', err);
+                    // Fallback to textarea method
+                    copyViaTextarea(text);
                 });
             } else {
-                const ta = document.createElement('textarea');
-                ta.value = text;
-                document.body.appendChild(ta);
-                ta.select();
-                document.execCommand('copy');
-                document.body.removeChild(ta);
-                showAlert('สำเร็จ', 'คัดลอกแล้ว! พร้อมวางใน WhatsApp 📱', 'success');
+                // Fallback for non-secure contexts (mobile may need this)
+                copyViaTextarea(text);
             }
         } catch (e) {
-            console.error('Error:', e);
+            console.error('Error in copyReceiptToWhatsApp():', e);
+            showAlert('ผิดพลาด', 'ไม่สามารถคัดลอกได้: ' + e.message, 'error');
+        }
+    }
+
+    function copyViaTextarea(text) {
+        try {
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.position = 'fixed';
+            ta.style.left = '-999999px';
+            ta.style.top = '-999999px';
+            document.body.appendChild(ta);
+            ta.focus();
+            ta.select();
+            const success = document.execCommand('copy');
+            document.body.removeChild(ta);
+            
+            if (success) {
+                showAlert('สำเร็จ', 'คัดลอกแล้ว! พร้อมวางใน WhatsApp 📱', 'success');
+            } else {
+                showAlert('ผิดพลาด', 'ไม่สามารถคัดลอกได้ กรุณาลองใหม่', 'error');
+            }
+        } catch (e) {
+            console.error('Textarea copy error:', e);
             showAlert('ผิดพลาด', 'ไม่สามารถคัดลอกได้', 'error');
         }
     }
@@ -649,7 +678,7 @@
             };
 
             // Send to Google Apps Script via fetch with CORS workaround
-            fetch(APPS_SCRIPT_URL + "?callback=handleResponse", {
+            fetch(APPS_SCRIPT_URL, {
                 method: 'POST',
                 mode: 'no-cors',
                 body: JSON.stringify(payload),
