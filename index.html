@@ -168,8 +168,8 @@
         
         <label>ประเภทหวย</label>
         <div class="toggle-group">
-            <button id="lBtn" class="btn-toggle active" onclick="setType('lao')">หวยลาว 🇱🇦</button>
-            <button id="tBtn" class="btn-toggle" onclick="setType('thai')">หวยไทย 🇹🇭</button>
+            <button type="button" id="lBtn" class="btn-toggle active" aria-pressed="true" onclick="setType('lao')">หวยลาว 🇱🇦</button>
+            <button type="button" id="tBtn" class="btn-toggle" aria-pressed="false" onclick="setType('thai')">หวยไทย 🇹🇭</button>
         </div>
 
         <div class="grid">
@@ -184,14 +184,14 @@
         </div>
         
         <div class="quick-scroll">
-            <button class="btn-quick" onclick="quick('amt', 1000)">1K</button>
-            <button class="btn-quick" onclick="quick('amt', 5000)">5K</button>
-            <button class="btn-quick" onclick="quick('amt', 10000)">10K</button>
-            <button class="btn-quick" onclick="quick('amt', 20000)">20K</button>
-            <button class="btn-quick" onclick="quick('amt', 50000)">50K</button>
+            <button type="button" class="btn-quick" onclick="quick('amt', 1000)">1K</button>
+            <button type="button" class="btn-quick" onclick="quick('amt', 5000)">5K</button>
+            <button type="button" class="btn-quick" onclick="quick('amt', 10000)">10K</button>
+            <button type="button" class="btn-quick" onclick="quick('amt', 20000)">20K</button>
+            <button type="button" class="btn-quick" onclick="quick('amt', 50000)">50K</button>
         </div>
 
-        <button class="btn-main" onclick="handleAdd()">+ เพิ่มรายการ</button>
+        <button type="button" class="btn-main" onclick="handleAdd()">+ เพิ่มรายการ</button>
 
         <div class="random-container">
             <label style="color: var(--ios-orange); text-align: center;">ระบบสุ่มเลขนำโชค</label>
@@ -201,7 +201,7 @@
                 <option value="5">สุ่ม 5 รายการ</option>
                 <option value="10">สุ่ม 10 รายการ</option>
             </select>
-            <button class="btn-random" onclick="generateRandom()">สุ่มเลขท้าย 3 ตัว</button>
+            <button type="button" class="btn-random" onclick="generateRandom()">สุ่มเลขท้าย 3 ตัว</button>
         </div>
     </div>
 
@@ -217,15 +217,15 @@
                 <small style="font-size: 14px; color: #1c1c1e;">ยอดรวม:</small> <span id="total">0</span> ₭
             </div>
         </div>
-        <button class="btn-copy" onclick="copyToWhatsApp()" id="copyBtn">📋 คัดลอกรายการ</button>
+        <!-- Copy button removed from main view; available in receipt popup after confirmation -->
     </div>
 
     <div class="card" style="padding: 15px;">
         <div class="toggle-group" style="margin-bottom: 12px;">
-            <button id="cashBtn" class="btn-toggle active" onclick="setPay('Cash')">💵 เงินสด</button>
-            <button id="bankBtn" class="btn-toggle" onclick="setPay('Transfer')">📲 โอนเงิน</button>
+            <button type="button" id="cashBtn" class="btn-toggle active" aria-pressed="true" onclick="setPay('Cash')">💵 เงินสด</button>
+            <button type="button" id="bankBtn" class="btn-toggle" aria-pressed="false" onclick="setPay('Transfer')">📲 โอนเงิน</button>
         </div>
-        <button id="submitBtn" class="btn-submit" onclick="submit()">ยืนยันการซื้อ</button>
+        <button type="button" id="submitBtn" class="btn-submit" onclick="submit()">ยืนยันการซื้อ</button>
     </div>
 </div>
 
@@ -234,7 +234,7 @@
         <span id="alertIcon" class="alert-icon"></span>
         <div id="alertTitle" class="alert-title"></div>
         <div id="alertMsg" class="alert-msg"></div>
-        <button class="btn-main" onclick="hideAlert()">ตกลง</button>
+        <button type="button" class="btn-main" onclick="hideAlert()">ตกลง</button>
     </div>
 </div>
 
@@ -248,8 +248,8 @@
         <div class="receipt-title">บันทึกเรียบร้อย</div>
         <div id="receiptContent"></div>
         <div class="receipt-button-group">
-            <button class="receipt-button receipt-copy-btn" onclick="copyReceiptToWhatsApp()">📋 คัดลอก</button>
-            <button class="receipt-button receipt-close-btn" onclick="closeReceipt()">ปิด</button>
+            <button type="button" class="receipt-button receipt-copy-btn" onclick="copyReceiptToWhatsApp()">📋 คัดลอก</button>
+            <button type="button" class="receipt-button receipt-close-btn" onclick="closeReceipt()">ปิด</button>
         </div>
     </div>
 </div>
@@ -322,6 +322,8 @@
         type = t;
         document.getElementById('lBtn').classList.toggle('active', t === 'lao');
         document.getElementById('tBtn').classList.toggle('active', t === 'thai');
+        document.getElementById('lBtn').setAttribute('aria-pressed', t === 'lao');
+        document.getElementById('tBtn').setAttribute('aria-pressed', t === 'thai');
     }
 
     // ===== PAYMENT METHOD SELECTION =====
@@ -330,6 +332,8 @@
         payment = p;
         document.getElementById('cashBtn').classList.toggle('active', p === 'Cash');
         document.getElementById('bankBtn').classList.toggle('active', p === 'Transfer');
+        document.getElementById('cashBtn').setAttribute('aria-pressed', p === 'Cash');
+        document.getElementById('bankBtn').setAttribute('aria-pressed', p === 'Transfer');
     }
 
     // ===== RANDOM NUMBER GENERATOR =====
@@ -412,11 +416,11 @@
         document.getElementById('popContent').innerHTML = `
             <h3 class="popup-title">เลขไทย ${n}</h3>
             <div class="popup-button-group">
-                <button class="btn-main" onclick="addOrder('${n}', 'บน', ${parseInt(a.replace(/,/g, '')) || 0}); closePop()">บน</button>
-                <button class="btn-main" style="background:var(--ios-pink)" onclick="addOrder('${n}', 'ล่าง', ${parseInt(a.replace(/,/g, '')) || 0}); closePop()">ล่าง</button>
+                <button type="button" class="btn-main" onclick="addOrder('${n}', 'บน', ${parseInt(a.replace(/,/g, '')) || 0}); closePop()">บน</button>
+                <button type="button" class="btn-main" style="background:var(--ios-pink)" onclick="addOrder('${n}', 'ล่าง', ${parseInt(a.replace(/,/g, '')) || 0}); closePop()">ล่าง</button>
             </div>
-            <button class="btn-main" style="background:var(--ios-orange); margin-top:10px" onclick="showDualMode('${n}', '${a}')">บน และ ล่าง</button>
-            <button class="btn-toggle popup-cancel-btn" onclick="closePop()">ยกเลิก</button>
+            <button type="button" class="btn-main" style="background:var(--ios-orange); margin-top:10px" onclick="showDualMode('${n}', '${a}')">บน และ ล่าง</button>
+            <button type="button" class="btn-toggle popup-cancel-btn" onclick="closePop()">ยกเลิก</button>
         `;
     }
 
@@ -428,22 +432,22 @@
                 <span class="pop-label" style="color:var(--ios-blue)">ยอดซื้อ "บน"</span>
                 <input type="text" id="amtTop" inputmode="decimal" value="${amtValue}" placeholder="0">
                 <div class="pop-quick-group">
-                    <button class="btn-quick-pop" onclick="quick('amtTop', 1000)">1K</button>
-                    <button class="btn-quick-pop" onclick="quick('amtTop', 5000)">5K</button>
-                    <button class="btn-quick-pop" onclick="quick('amtTop', 10000)">10K</button>
+                    <button type="button" class="btn-quick-pop" onclick="quick('amtTop', 1000)">1K</button>
+                    <button type="button" class="btn-quick-pop" onclick="quick('amtTop', 5000)">5K</button>
+                    <button type="button" class="btn-quick-pop" onclick="quick('amtTop', 10000)">10K</button>
                 </div>
             </div>
             <div class="dual-box">
                 <span class="pop-label" style="color:var(--ios-pink)">ยอดซื้อ "ล่าง"</span>
                 <input type="text" id="amtBottom" inputmode="decimal" value="${amtValue}" placeholder="0">
                 <div class="pop-quick-group">
-                    <button class="btn-quick-pop" onclick="quick('amtBottom', 1000)">1K</button>
-                    <button class="btn-quick-pop" onclick="quick('amtBottom', 5000)">5K</button>
-                    <button class="btn-quick-pop" onclick="quick('amtBottom', 10000)">10K</button>
+                    <button type="button" class="btn-quick-pop" onclick="quick('amtBottom', 1000)">1K</button>
+                    <button type="button" class="btn-quick-pop" onclick="quick('amtBottom', 5000)">5K</button>
+                    <button type="button" class="btn-quick-pop" onclick="quick('amtBottom', 10000)">10K</button>
                 </div>
             </div>
-            <button class="btn-submit" onclick="confirmDual('${n}')">ยืนยัน</button>
-            <button class="btn-toggle popup-cancel-btn" onclick="closePop()">ยกเลิก</button>
+            <button type="button" class="btn-submit" onclick="confirmDual('${n}')">ยืนยัน</button>
+            <button type="button" class="btn-toggle popup-cancel-btn" onclick="closePop()">ยกเลิก</button>
         `;
     }
 
@@ -475,40 +479,52 @@
         }
 
         try {
-            let text = "";
-            text += "📋 *รายการสั่งซื้อหวย*\n\n";
-            text += `👤 *ลูกค้า:* ${document.getElementById('cust').value || "ทั่วไป"}\n`;
-            text += `💳 *ชำระ:* ${payment === 'Cash' ? 'เงินสด' : 'โอนเงิน'}\n`;
-            text += "━━━━━━━━━━━━━━━━━━━\n\n";
+            const lines = [];
+            lines.push("🔔 รายการสั่งซื้อใหม่");
+            lines.push("");
+            lines.push(`👤 ลูกค้า: ${document.getElementById('cust').value || "ทั่วไป"}`);
+            lines.push(`💳 ชำระ: ${payment === 'Cash' ? 'เงินสด' : 'โอนเงิน'}`);
+            lines.push("");
+            lines.push("รายการ:");
 
             orders.forEach(item => {
                 const icon = item.type === 'thai' ? '🇹🇭' : '🇱🇦';
-                text += `${icon} *${item.number}* (${item.position}) - ${item.amount.toLocaleString()} ₭`;
-                if (item.animal) text += ` [${item.animal}]`;
-                text += "\n";
+                // compact single-line per item to avoid wrapping
+                lines.push(`${icon} ${item.number} (${item.position}) - ${item.amount.toLocaleString()} ₭${item.animal ? ' ['+item.animal+']' : ''}`);
             });
 
-            let tTotal = 0;
-            orders.forEach(item => tTotal += item.amount);
-            text += "\n━━━━━━━━━━━━━━━━━━━\n";
-            text += `💰 *รวมเงิน:* ${tTotal.toLocaleString()} ₭\n`;
-            text += `⏰ *เวลา:* ${new Date().toLocaleString('th-TH')}`;
+            const tTotal = orders.reduce((s, it) => s + it.amount, 0);
+            lines.push("");
+            lines.push(`💰 รวม: ${tTotal.toLocaleString()} ₭`);
+            lines.push(`⏰ เวลา: ${new Date().toLocaleString('th-TH')}`);
+
+            const text = lines.join('\n');
 
             // Copy to clipboard
-            navigator.clipboard.writeText(text).then(() => {
-                showAlert("สำเร็จ", "คัดลอกรายการแล้ว! พร้อมส่งไปยัง WhatsApp 📱", "success");
-            }).catch(err => {
-                // Fallback for browsers that don't support clipboard API
-                const textarea = document.createElement("textarea");
-                textarea.value = text;
-                document.body.appendChild(textarea);
-                textarea.select();
-                document.execCommand("copy");
-                document.body.removeChild(textarea);
-                showAlert("สำเร็จ", "คัดลอกรายการแล้ว! พร้อมส่งไปยัง WhatsApp 📱", "success");
-            });
-        } catch(e) {
-            console.error("Error:", e);
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(() => {
+                    showAlert("สำเร็จ", "คัดลอกรายการแล้ว! พร้อมวางใน WhatsApp 📱", "success");
+                }).catch(err => {
+                    // fallback
+                    const ta = document.createElement('textarea');
+                    ta.value = text;
+                    document.body.appendChild(ta);
+                    ta.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(ta);
+                    showAlert("สำเร็จ", "คัดลอกรายการแล้ว! พร้อมวางใน WhatsApp 📱", "success");
+                });
+            } else {
+                const ta = document.createElement('textarea');
+                ta.value = text;
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+                showAlert("สำเร็จ", "คัดลอกรายการแล้ว! พร้อมวางใน WhatsApp 📱", "success");
+            }
+        } catch (e) {
+            console.error('Error:', e);
             showAlert("ผิดพลาด", "ไม่สามารถคัดลอกได้: " + e.message, "error");
         }
     }
@@ -555,39 +571,50 @@
         if (orders.length === 0) return;
 
         try {
-            let text = "📋 *รายการสั่งซื้อหวย*\n\n";
-            text += `👤 *ลูกค้า:* ${document.getElementById('cust').value || "ทั่วไป"}\n`;
-            text += `💳 *ชำระ:* ${payment === 'Cash' ? 'เงินสด' : 'โอนเงิน'}\n`;
-            text += "━━━━━━━━━━━━━━━━━━━\n\n";
+            const lines = [];
+            lines.push('🔔 รายการสั่งซื้อใหม่');
+            lines.push('');
+            lines.push(`👤 ลูกค้า: ${document.getElementById('cust').value || 'ทั่วไป'}`);
+            lines.push(`💳 ชำระ: ${payment === 'Cash' ? 'เงินสด' : 'โอนเงิน'}`);
+            lines.push('');
+            lines.push('รายการ:');
 
             orders.forEach(item => {
                 const icon = item.type === 'thai' ? '🇹🇭' : '🇱🇦';
-                text += `${icon} *${item.number}* (${item.position}) - ${item.amount.toLocaleString()} ₭`;
-                if (item.animal) text += ` [${item.animal}]`;
-                text += "\n";
+                lines.push(`${icon} ${item.number} (${item.position}) - ${item.amount.toLocaleString()} ₭${item.animal ? ' ['+item.animal+']' : ''}`);
             });
 
-            let tTotal = 0;
-            orders.forEach(item => tTotal += item.amount);
-            text += "\n━━━━━━━━━━━━━━━━━━━\n";
-            text += `💰 *รวมเงิน:* ${tTotal.toLocaleString()} ₭\n`;
-            text += `⏰ *เวลา:* ${new Date().toLocaleString('th-TH')}`;
+            const tTotal = orders.reduce((s, it) => s + it.amount, 0);
+            lines.push('');
+            lines.push(`💰 รวม: ${tTotal.toLocaleString()} ₭`);
+            lines.push(`⏰ เวลา: ${new Date().toLocaleString('th-TH')}`);
 
-            // Copy to clipboard
-            navigator.clipboard.writeText(text).then(() => {
-                showAlert("สำเร็จ", "คัดลอกแล้ว! พร้อมส่งไปยัง WhatsApp 📱", "success");
-            }).catch(err => {
-                const textarea = document.createElement("textarea");
-                textarea.value = text;
-                document.body.appendChild(textarea);
-                textarea.select();
-                document.execCommand("copy");
-                document.body.removeChild(textarea);
-                showAlert("สำเร็จ", "คัดลอกแล้ว! พร้อมส่งไปยัง WhatsApp 📱", "success");
-            });
-        } catch(e) {
-            console.error("Error:", e);
-            showAlert("ผิดพลาด", "ไม่สามารถคัดลอกได้", "error");
+            const text = lines.join('\n');
+
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(() => {
+                    showAlert('สำเร็จ', 'คัดลอกแล้ว! พร้อมวางใน WhatsApp 📱', 'success');
+                }).catch(err => {
+                    const ta = document.createElement('textarea');
+                    ta.value = text;
+                    document.body.appendChild(ta);
+                    ta.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(ta);
+                    showAlert('สำเร็จ', 'คัดลอกแล้ว! พร้อมวางใน WhatsApp 📱', 'success');
+                });
+            } else {
+                const ta = document.createElement('textarea');
+                ta.value = text;
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+                showAlert('สำเร็จ', 'คัดลอกแล้ว! พร้อมวางใน WhatsApp 📱', 'success');
+            }
+        } catch (e) {
+            console.error('Error:', e);
+            showAlert('ผิดพลาด', 'ไม่สามารถคัดลอกได้', 'error');
         }
     }
 
