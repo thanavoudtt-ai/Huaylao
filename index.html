@@ -4,6 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Smart Huay Pro 2026</title>
+    
+    <!-- iOS App Icon for Home Screen (local SVG fallback) -->
+    <link rel="apple-touch-icon" href="icon.svg">
+    
+    <!-- PWA Manifest (local) -->
+    <link rel="manifest" href="manifest.json">
+    
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -45,12 +52,16 @@
         label { display: block; font-size: 13px; color: #3a3a3c; margin-bottom: 8px; font-weight: 600; padding-left: 2px; }
 
         input, select {
-            width: 100%; padding: 16px 18px; border-radius: 15px; border: none;
-            background: rgba(255,255,255,0.8); font-size: 20px; font-weight: 700;
+            width: 100%; padding: 16px 18px; border-radius: 15px; border: 2px solid rgba(0,122,255,0.15);
+            background: rgba(255,255,255,0.9); font-size: 20px; font-weight: 700;
             box-sizing: border-box; margin-bottom: 18px; outline: none; transition: all 0.3s;
             font-family: 'Noto Sans Thai', sans-serif; text-align: center;
         }
-        input:focus { background: #fff; box-shadow: 0 0 0 3px rgba(0,122,255,0.1); }
+        input:focus, select:focus { 
+            background: #fff; 
+            border-color: var(--ios-blue);
+            box-shadow: 0 0 0 3px rgba(0,122,255,0.15), 0 4px 12px rgba(0,122,255,0.2);
+        }
 
         .toggle-group {
             display: grid; grid-template-columns: 1fr 1fr; gap: 10px; background: rgba(0,0,0,0.05);
@@ -59,7 +70,9 @@
         .btn-toggle {
             border: none; padding: 10px; border-radius: 12px; font-weight: 600; cursor: pointer;
             background: transparent; color: #8e8e93; font-family: 'Noto Sans Thai', sans-serif;
+            transition: all 0.3s ease; box-shadow: 0 2px 5px rgba(0,0,0,0);
         }
+        .btn-toggle:active { transform: scale(0.97); opacity: 0.8; }
         .btn-toggle.active { background: #fff; color: var(--ios-blue); box-shadow: 0 3px 8px rgba(0,0,0,0.1); }
 
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
@@ -69,18 +82,28 @@
             border-radius: 18px; padding: 16px; font-weight: 700; font-size: 16px;
             cursor: pointer; box-shadow: 0 4px 15px rgba(0,122,255,0.3);
             font-family: 'Noto Sans Thai', sans-serif; margin-top: 5px;
+            transition: all 0.3s ease;
         }
+        .btn-main:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,122,255,0.4); }
+        .btn-main:active { transform: scale(0.98); opacity: 0.9; }
 
         .btn-random {
             background: var(--ios-orange); color: #fff; width: 100%; border: none;
             border-radius: 15px; padding: 12px; font-weight: 700; font-size: 14px;
             cursor: pointer; font-family: 'Noto Sans Thai', sans-serif; margin-top: 10px;
+            transition: all 0.3s ease;
         }
+        .btn-random:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(255,149,0,0.3); }
+        .btn-random:active { transform: scale(0.97); opacity: 0.9; }
 
         .btn-quick {
             background: #fff; color: var(--ios-blue); padding: 10px 0; border-radius: 12px;
             font-weight: 700; border: none; flex: 1; cursor: pointer; font-size: 13px;
+            transition: all 0.2s ease;
         }
+        .btn-quick:hover { background: rgba(0,122,255,0.08); }
+        .btn-quick:active { transform: scale(0.97); opacity: 0.8; }
+        .btn-quick:focus { outline: 2px solid var(--ios-blue); outline-offset: 2px; }
 
         .pop-quick-group {
             display: flex; gap: 5px; margin-bottom: 10px; overflow-x: auto; padding-bottom: 5px;
@@ -88,8 +111,10 @@
         .btn-quick-pop {
             background: #fff; color: var(--ios-blue); border: 1px solid var(--ios-light-gray);
             border-radius: 10px; padding: 8px 0; font-weight: 700; flex: 1; cursor: pointer;
-            font-size: 11px; min-width: 45px;
+            font-size: 11px; min-width: 45px; transition: all 0.2s ease;
         }
+        .btn-quick-pop:hover { background: rgba(0,122,255,0.05); border-color: var(--ios-blue); }
+        .btn-quick-pop:active { transform: scale(0.95); opacity: 0.8; }
 
         .quick-scroll { display: flex; gap: 8px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 5px; }
 
@@ -100,16 +125,26 @@
         .total-row { text-align: right; font-size: 24px; font-weight: 700; color: var(--ios-pink); margin-top: 10px; }
 
         .order-row {
-            display: flex; justify-content: space-between; align-items: center; padding: 12px 15px;
-            background: rgba(255,255,255,0.5); border-radius: 15px; margin-bottom: 8px;
+            display: flex; justify-content: space-between; align-items: center; padding: 14px 16px;
+            background: rgba(255,255,255,0.6); border: 1px solid rgba(0,122,255,0.1);
+            border-radius: 15px; margin-bottom: 10px; transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        .order-row:hover { 
+            background: rgba(255,255,255,0.8); 
+            border-color: rgba(0,122,255,0.2);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            transform: translateY(-1px);
         }
 
         .btn-submit {
             background: var(--ios-green); color: #fff; width: 100%; border: none;
             border-radius: 18px; padding: 16px; font-weight: 700; font-size: 16px;
             cursor: pointer; box-shadow: 0 4px 15px rgba(52,199,89,0.3);
-            font-family: 'Noto Sans Thai', sans-serif; transition: all 0.3s;
+            font-family: 'Noto Sans Thai', sans-serif; transition: all 0.3s ease;
         }
+        .btn-submit:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(52,199,89,0.4); }
+        .btn-submit:active:not(:disabled) { transform: scale(0.98); opacity: 0.9; }
         .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
 
         .alert-overlay {
@@ -140,6 +175,80 @@
         .btn-copy:disabled { opacity: 0.6; cursor: not-allowed; }
         
         .receipt-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); backdrop-filter: blur(5px); display: none; justify-content: center; align-items: center; z-index: 3500; padding: 20px; }
+        
+        /* Splash Screen */
+        .splash-overlay {
+            position: fixed;
+            inset: 0;
+            background: var(--ios-bg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            z-index: 9999;
+            opacity: 1;
+            transition: opacity 0.5s ease-out;
+        }
+        .splash-overlay.fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .splash-logo {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 20px;
+            animation: bounce 1.5s ease-in-out infinite;
+            border-radius: 50%;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+        }
+        .splash-logo img {
+            width: 88%;
+            height: 88%;
+            object-fit: contain;
+            display: block;
+            transform: translateZ(0);
+        }
+        .splash-logo svg {
+            width: 88%;
+            height: 88%;
+            display: block;
+            transform: translateZ(0);
+        }
+        .splash-text {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--ios-blue);
+            text-align: center;
+            margin-bottom: 6px;
+            font-family: 'Noto Sans Thai', sans-serif;
+        }
+        .splash-subtext {
+            font-size: 14px;
+            color: #8e8e93;
+            font-family: 'Noto Sans Thai', sans-serif;
+        }
+        .splash-spinner {
+            width: 30px;
+            height: 30px;
+            margin-top: 18px;
+            border: 3px solid rgba(0,122,255,0.2);
+            border-top: 3px solid var(--ios-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-12px); }
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
         .receipt-card { background: #fff; border-radius: 25px; padding: 30px; width: 100%; max-width: 350px; max-height: 80vh; overflow-y: auto; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.15); }
         .receipt-header { font-size: 28px; margin-bottom: 5px; }
         .receipt-title { font-weight: 700; font-size: 20px; color: var(--ios-blue); margin-bottom: 20px; }
@@ -159,6 +268,20 @@
     </style>
 </head>
 <body>
+    <!-- Splash overlay: shows briefly on app open -->
+    <div class="splash-overlay" id="splashScreen">
+        <div class="splash-logo" aria-hidden="false">
+                <!-- Inline SVG logo: crisp, scalable, transparent-friendly -->
+                <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Smart Huay logo">
+                    <circle cx="100" cy="100" r="92" fill="#15122a" />
+                    <text x="50%" y="56%" font-family="Noto Sans Thai, Arial, sans-serif" font-weight="700" font-size="88" fill="#ffffff" text-anchor="middle" dominant-baseline="middle">SH</text>
+                    <text x="50%" y="86%" font-family="Noto Sans Thai, Arial, sans-serif" font-size="12" fill="#c9d3e6" text-anchor="middle">Smart Huay</text>
+                </svg>
+            </div>
+        <div class="splash-text">Smart Huay Pro</div>
+        <div class="splash-subtext">ยินดีต้อนรับ</div>
+        <div class="splash-spinner" aria-hidden="true"></div>
+    </div>
 
 <div id="app">
     <div class="card">
@@ -248,7 +371,6 @@
         <div class="receipt-title">บันทึกเรียบร้อย</div>
         <div id="receiptContent"></div>
         <div class="receipt-button-group">
-            <button type="button" class="receipt-button receipt-copy-btn" onclick="copyReceiptToWhatsApp()">📋 คัดลอก</button>
             <button type="button" class="receipt-button receipt-close-btn" onclick="closeReceipt()">ปิด</button>
         </div>
     </div>
@@ -297,13 +419,26 @@
     function formatAmount(value) {
         return Math.floor(value).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
+
+    /** Parse user input - handles "K" suffix (e.g., "20K" → 20000) */
+    function parseAmount(inputStr) {
+        let str = String(inputStr).trim().toUpperCase();
+        // Handle "K" suffix
+        if (str.endsWith('K')) {
+            const num = parseFloat(str.slice(0, -1));
+            return isNaN(num) ? 0 : Math.floor(num * 1000);
+        }
+        // Remove commas and parse as regular number
+        const num = parseInt(str.replace(/,/g, ''));
+        return isNaN(num) ? 0 : num;
+    }
     
     /** Quick amount buttons - adds value and formats display */
     function quick(id, v) { 
         const el = document.getElementById(id);
         if(!el) return;
         try {
-            let current = parseInt(el.value.replace(/,/g, '')) || 0;
+            let current = parseAmount(el.value) || 0;
             let newAmount = current + v;
             // Validate max amount (9,999,999)
             if(newAmount > 9999999) {
@@ -340,7 +475,7 @@
 
     function generateRandom() {
         const qty = parseInt(document.getElementById('randQty').value);
-        const amount = parseInt(document.getElementById('amt').value.replace(/,/g, ''));
+        const amount = parseAmount(document.getElementById('amt').value);
         if(!amount || amount <= 0) return showAlert("แจ้งเตือน", "กรุณาระบุจำนวนเงินที่จะซื้อสุ่มก่อน", "warning");
         for(let i = 0; i < qty; i++) {
             let num = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
@@ -361,7 +496,8 @@
             showDualPopup(n, a); 
         } else { 
             // For non-dual cases, amount is required
-            if(!a || parseInt(a.replace(/,/g, '')) <= 0) {
+            const amt = parseAmount(a);
+            if(!amt || amt <= 0) {
                 return showAlert("แจ้งเตือน", "กรุณาระบุจำนวนเงิน", "warning"); 
             }
             addOrder(n, 'ปกติ', parseInt(a.replace(/,/g, ''))); 
@@ -435,6 +571,8 @@
                     <button type="button" class="btn-quick-pop" onclick="quick('amtTop', 1000)">1K</button>
                     <button type="button" class="btn-quick-pop" onclick="quick('amtTop', 5000)">5K</button>
                     <button type="button" class="btn-quick-pop" onclick="quick('amtTop', 10000)">10K</button>
+                    <button type="button" class="btn-quick-pop" onclick="quick('amtTop', 20000)">20K</button>
+                    <button type="button" class="btn-quick-pop" onclick="quick('amtTop', 50000)">50K</button>
                 </div>
             </div>
             <div class="dual-box">
@@ -444,6 +582,8 @@
                     <button type="button" class="btn-quick-pop" onclick="quick('amtBottom', 1000)">1K</button>
                     <button type="button" class="btn-quick-pop" onclick="quick('amtBottom', 5000)">5K</button>
                     <button type="button" class="btn-quick-pop" onclick="quick('amtBottom', 10000)">10K</button>
+                    <button type="button" class="btn-quick-pop" onclick="quick('amtBottom', 20000)">20K</button>
+                    <button type="button" class="btn-quick-pop" onclick="quick('amtBottom', 50000)">50K</button>
                 </div>
             </div>
             <button type="button" class="btn-submit" onclick="confirmDual('${n}')">ยืนยัน</button>
@@ -453,8 +593,8 @@
 
     function confirmDual(n) {
         try {
-            const t = parseInt(document.getElementById('amtTop').value) || 0;
-            const b = parseInt(document.getElementById('amtBottom').value) || 0;
+            const t = parseAmount(document.getElementById('amtTop').value) || 0;
+            const b = parseAmount(document.getElementById('amtBottom').value) || 0;
             if(t <= 0 && b <= 0) {
                 showAlert("แจ้งเตือน", "กรุณาระบุจำนวนเงินอย่างน้อย 1 ด้าน", "warning");
                 return;
@@ -470,66 +610,7 @@
 
     function closePop() { document.getElementById('pop').style.display = 'none'; }
 
-    // ===== COPY TO WHATSAPP =====
-
-    function copyToWhatsApp() {
-        if (orders.length === 0) {
-            showAlert("แจ้งเตือน", "ไม่มีรายการที่จะคัดลอก", "warning");
-            return;
-        }
-
-        try {
-            const lines = [];
-            lines.push("🔔 รายการสั่งซื้อใหม่");
-            lines.push(`👤 ลูกค้า: ${document.getElementById('cust').value || "ทั่วไป"}`);
-            lines.push('─────────────');
-            lines.push('เลข  │ หวย │ ชุด  │ จำนวน');
-            lines.push('─────────────');
-
-            orders.forEach(item => {
-                const icon = item.type === 'thai' ? '🇹🇭' : '🇱🇦';
-                const numPad = item.number.padEnd(4);
-                const posPad = item.position.padEnd(4);
-                lines.push(`${numPad} | ${icon} | ${posPad} | ${item.amount.toLocaleString()}`);
-            });
-
-            const tTotal = orders.reduce((s, it) => s + it.amount, 0);
-            lines.push('─────────────');
-            lines.push('');
-            lines.push(`💰 รวมเงิน: ${tTotal.toLocaleString()} ₭`);
-            lines.push(`💳 ชำระ: ${payment === 'Cash' ? 'เงินสด' : 'โอนเงิน'}`);
-            lines.push(`⏰ เวลา: ${new Date().toLocaleString('th-TH')}`);
-
-            const text = lines.join('\n');
-
-            // Copy to clipboard
-            if (navigator.clipboard && navigator.clipboard.writeText) {
-                navigator.clipboard.writeText(text).then(() => {
-                    showAlert("สำเร็จ", "คัดลอกรายการแล้ว! พร้อมวางใน WhatsApp 📱", "success");
-                }).catch(err => {
-                    // fallback
-                    const ta = document.createElement('textarea');
-                    ta.value = text;
-                    document.body.appendChild(ta);
-                    ta.select();
-                    document.execCommand('copy');
-                    document.body.removeChild(ta);
-                    showAlert("สำเร็จ", "คัดลอกรายการแล้ว! พร้อมวางใน WhatsApp 📱", "success");
-                });
-            } else {
-                const ta = document.createElement('textarea');
-                ta.value = text;
-                document.body.appendChild(ta);
-                ta.select();
-                document.execCommand('copy');
-                document.body.removeChild(ta);
-                showAlert("สำเร็จ", "คัดลอกรายการแล้ว! พร้อมวางใน WhatsApp 📱", "success");
-            }
-        } catch (e) {
-            console.error('Error:', e);
-            showAlert("ผิดพลาด", "ไม่สามารถคัดลอกได้: " + e.message, "error");
-        }
-    }
+    
 
     // Temporary storage for receipt data (persists after orders are cleared)
     let receiptData = null;
@@ -578,80 +659,6 @@
         document.getElementById('receiptOverlay').style.display = 'none';
     }
 
-    /** Copy receipt to WhatsApp from the receipt modal */
-    function copyReceiptToWhatsApp() {
-        if (!receiptData || receiptData.orders.length === 0) {
-            showAlert('แจ้งเตือน', 'ไม่มีรายการที่จะคัดลอก', 'warning');
-            return;
-        }
-
-        try {
-            const lines = [];
-            lines.push('🔔 รายการสั่งซื้อใหม่');
-            lines.push(`👤 ลูกค้า: ${receiptData.customer}`);
-            lines.push('─────────────');
-            lines.push('เลข  │ หวย │ ชุด  │ จำนวน');
-            lines.push('─────────────');
-
-            receiptData.orders.forEach(item => {
-                const icon = item.type === 'thai' ? '🇹🇭' : '🇱🇦';
-                const numPad = item.number.padEnd(4);
-                const posPad = item.position.padEnd(4);
-                lines.push(`${numPad} | ${icon} | ${posPad} | ${item.amount.toLocaleString()}`);
-            });
-
-            const tTotal = receiptData.orders.reduce((s, it) => s + it.amount, 0);
-            lines.push('─────────────');
-            lines.push('');
-            lines.push(`💰 รวมเงิน: ${tTotal.toLocaleString()} ₭`);
-            lines.push(`💳 ชำระ: ${receiptData.payment === 'Cash' ? 'เงินสด' : 'โอนเงิน'}`);
-            lines.push(`⏰ เวลา: ${new Date().toLocaleString('th-TH')}`);
-
-            const text = lines.join('\n');
-
-            // Try modern clipboard API first (secure contexts only)
-            if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
-                navigator.clipboard.writeText(text).then(() => {
-                    showAlert('สำเร็จ', 'คัดลอกแล้ว! พร้อมวางใน WhatsApp 📱', 'success');
-                }).catch(err => {
-                    console.error('Clipboard API failed:', err);
-                    // Fallback to textarea method
-                    copyViaTextarea(text);
-                });
-            } else {
-                // Fallback for non-secure contexts (mobile may need this)
-                copyViaTextarea(text);
-            }
-        } catch (e) {
-            console.error('Error in copyReceiptToWhatsApp():', e);
-            showAlert('ผิดพลาด', 'ไม่สามารถคัดลอกได้: ' + e.message, 'error');
-        }
-    }
-
-    function copyViaTextarea(text) {
-        try {
-            const ta = document.createElement('textarea');
-            ta.value = text;
-            ta.style.position = 'fixed';
-            ta.style.left = '-999999px';
-            ta.style.top = '-999999px';
-            document.body.appendChild(ta);
-            ta.focus();
-            ta.select();
-            const success = document.execCommand('copy');
-            document.body.removeChild(ta);
-            
-            if (success) {
-                showAlert('สำเร็จ', 'คัดลอกแล้ว! พร้อมวางใน WhatsApp 📱', 'success');
-            } else {
-                showAlert('ผิดพลาด', 'ไม่สามารถคัดลอกได้ กรุณาลองใหม่', 'error');
-            }
-        } catch (e) {
-            console.error('Textarea copy error:', e);
-            showAlert('ผิดพลาด', 'ไม่สามารถคัดลอกได้', 'error');
-        }
-    }
-
     // ===== SUBMISSION =====
 
     function submit() {
@@ -671,7 +678,7 @@
                         type: item.type,
                         number: item.number,
                         position: item.position,
-                        amount: String(item.amount).replace(/,/g, ''),
+                        amount: String(parseAmount(item.amount)).replace(/,/g, ''),
                         animal: item.animal || ""
                     };
                 })
@@ -718,6 +725,18 @@
             showAlert("ผิดพลาด", "เกิดข้อผิดพลาดในการเตรียมข้อมูล: " + e.message, "error");
         }
     }
+</script>
+<script>
+// Splash Screen Logic
+window.addEventListener('load', function() {
+    const splashScreen = document.getElementById('splashScreen');
+    if (!splashScreen) return;
+    // Keep splash for 1.5s then fade out
+    setTimeout(function() {
+        splashScreen.classList.add('fade-out');
+        setTimeout(function() { splashScreen.style.display = 'none'; }, 500);
+    }, 1500);
+});
 </script>
 </body>
 </html>
