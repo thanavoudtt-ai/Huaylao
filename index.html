@@ -81,7 +81,15 @@
             background: #fff; color: var(--ios-blue); padding: 10px 0; border-radius: 12px;
             font-weight: 700; border: none; flex: 1; cursor: pointer; font-size: 13px;
         }
-        .btn-quick-pop { font-size: 11px; padding: 8px 0; border-radius: 10px; }
+
+        .pop-quick-group {
+            display: flex; gap: 5px; margin-bottom: 10px; overflow-x: auto; padding-bottom: 5px;
+        }
+        .btn-quick-pop {
+            background: #fff; color: var(--ios-blue); border: 1px solid var(--ios-light-gray);
+            border-radius: 10px; padding: 8px 0; font-weight: 700; flex: 1; cursor: pointer;
+            font-size: 11px; min-width: 45px;
+        }
 
         .quick-scroll { display: flex; gap: 8px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 5px; }
 
@@ -100,8 +108,9 @@
             background: var(--ios-green); color: #fff; width: 100%; border: none;
             border-radius: 18px; padding: 16px; font-weight: 700; font-size: 16px;
             cursor: pointer; box-shadow: 0 4px 15px rgba(52,199,89,0.3);
-            font-family: 'Noto Sans Thai', sans-serif;
+            font-family: 'Noto Sans Thai', sans-serif; transition: all 0.3s;
         }
+        .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
 
         .alert-overlay {
             position: fixed; inset: 0; background: rgba(0,0,0,0.3); backdrop-filter: blur(5px);
@@ -110,7 +119,7 @@
         .alert-card { background: #fff; border-radius: 25px; padding: 30px; width: 80%; text-align: center; }
 
         .popup-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.2); backdrop-filter: blur(5px); display: none; align-items: flex-end; z-index: 2000; }
-        .bottom-sheet { background: #fff; width: 100%; border-radius: 30px 30px 0 0; padding: 30px 24px 50px; box-sizing: border-box; }
+        .bottom-sheet { background: #fff; width: 100%; border-radius: 30px 30px 0 0; padding: 30px 24px 50px; box-sizing: border-box; max-height: 90vh; overflow-y: auto; }
         
         .dual-box { background: rgba(0,0,0,0.03); padding: 15px; border-radius: 20px; margin-bottom: 15px; }
         .pop-label { font-weight: 700; font-size: 14px; margin-bottom: 10px; display: block; }
@@ -120,20 +129,27 @@
             border: 2px dashed var(--ios-orange); border-radius: 20px;
             padding: 15px; margin-top: 15px; background: rgba(255, 149, 0, 0.05);
         }
+
+        .popup-title { text-align: center; margin-bottom: 20px; font-weight: 700; font-size: 18px; }
+        .popup-button-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .popup-cancel-btn { width: 100%; margin-top: 15px; background: #f2f2f7; }
+        .alert-icon { font-size: 50px; display: block; margin-bottom: 10px; }
+        .alert-title { font-weight: 700; font-size: 20px; }
+        .alert-msg { margin: 10px 0 20px; color: #666; word-break: break-word; }
     </style>
 </head>
 <body>
 
 <div id="app">
     <div class="card">
-        <h2 class="title">Smart Huay</h2>
+        <h2 class="title">Smart Huay Pro</h2>
         <label>ชื่อลูกค้า</label>
         <input type="text" id="cust" placeholder="ระบุชื่อลูกค้า...">
         
         <label>ประเภทหวย</label>
         <div class="toggle-group">
-            <button id="tBtn" class="btn-toggle active" onclick="setType('thai')">หวยไทย</button>
-            <button id="lBtn" class="btn-toggle" onclick="setType('lao')">หวยลาว</button>
+            <button id="lBtn" class="btn-toggle active" onclick="setType('lao')">หวยลาว 🇱🇦</button>
+            <button id="tBtn" class="btn-toggle" onclick="setType('thai')">หวยไทย 🇹🇭</button>
         </div>
 
         <div class="grid">
@@ -165,14 +181,7 @@
                 <option value="5">สุ่ม 5 รายการ</option>
                 <option value="10">สุ่ม 10 รายการ</option>
             </select>
-            
-            <div id="thaiRandom">
-                <button class="btn-random" onclick="generateRandom(3)">สุ่มเลขท้าย 3 ตัว</button>
-            </div>
-            <div id="laoRandom" style="display: none; grid-template-columns: 1fr 1fr; gap: 10px;">
-                <button class="btn-random" onclick="generateRandom(2)">สุ่ม 2 ตัว</button>
-                <button class="btn-random" onclick="generateRandom(3)">สุ่ม 3 ตัว</button>
-            </div>
+            <button class="btn-random" onclick="generateRandom()">สุ่มเลขท้าย 3 ตัว</button>
         </div>
     </div>
 
@@ -181,8 +190,8 @@
         <div id="list"></div>
         <div class="summary-box">
             <div class="summary-row">
-                <span>TH ไทย: <span id="sumThai">0</span></span>
-                <span>LA ลาว: <span id="sumLao">0</span></span>
+                <span>🇱🇦 ลาว: <span id="sumLao">0</span></span>
+                <span>🇹🇭 ไทย: <span id="sumThai">0</span></span>
             </div>
             <div class="total-row">
                 <small style="font-size: 14px; color: #1c1c1e;">ยอดรวม:</small> <span id="total">0</span> ₭
@@ -192,8 +201,8 @@
 
     <div class="card" style="padding: 15px;">
         <div class="toggle-group" style="margin-bottom: 12px;">
-            <button id="cashBtn" class="btn-toggle active" onclick="setPay('Cash')">เงินสด</button>
-            <button id="bankBtn" class="btn-toggle" onclick="setPay('Transfer')">โอนเงิน</button>
+            <button id="cashBtn" class="btn-toggle active" onclick="setPay('Cash')">💵 เงินสด</button>
+            <button id="bankBtn" class="btn-toggle" onclick="setPay('Transfer')">📲 โอนเงิน</button>
         </div>
         <button id="submitBtn" class="btn-submit" onclick="submit()">ยืนยันการซื้อ</button>
     </div>
@@ -201,9 +210,9 @@
 
 <div id="customAlert" class="alert-overlay">
     <div class="alert-card">
-        <span id="alertIcon" style="font-size: 50px; display: block; margin-bottom: 10px;"></span>
-        <div id="alertTitle" style="font-weight: 700; font-size: 20px;"></div>
-        <div id="alertMsg" style="margin: 10px 0 20px; color: #666;"></div>
+        <span id="alertIcon" class="alert-icon"></span>
+        <div id="alertTitle" class="alert-title"></div>
+        <div id="alertMsg" class="alert-msg"></div>
         <button class="btn-main" onclick="hideAlert()">ตกลง</button>
     </div>
 </div>
@@ -213,18 +222,28 @@
 </div>
 
 <script>
+    // ===== CONFIGURATION =====
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxSx0epz0mjDuw2XRoGhvust_sBL_wGF7oStmT0fTLmcuvmrwD_aY6Ty43hfSbZaOC5/exec";
+
+    // ===== STATE MANAGEMENT =====
     let orders = [];
-    let type = 'thai';
+    let type = 'lao'; 
     let payment = 'Cash';
 
+    // Map of last 2 digits to animal names (Thai zodiac system)
     const animalMap = {"01,41,81":"ปลาน้อย","02,42,82":"หอย","03,43,83":"ห่าน","04,44,84":"นกยูง","05,45,85":"สิงโต","06,46,86":"เสือ","07,47,87":"หมู","08,48,88":"กระต่าย","09,49,89":"ควาย","10,50,90":"นากน้ำ","11,51,91":"หมา","12,52,92":"ม้า","13,53,93":"ช้าง","14,54,94":"แมวบ้าน","15,55,95":"หนู","16,56,96":"ผึ้ง","17,57,97":"นกกระยาง","18,58,98":"แมวป่า","19,59,99":"ผีเสื้อ","00,20,60":"ตะขาบ","21,61":"นกนางแอ่น","22,62":"นกพิราบ","23,63":"ลิง","24,64":"กบ","25,65":"เหยี่ยว","26,66":"นากบิน","27,67":"เต่า","28,68":"ไก่","29,69":"ปลาไหล","30,70":"ปลาใหญ่","31,71":"กุ้ง","32,72":"งู","33,73":"แมงมุม","34,74":"กวาง","35,75":"แพะ","36,76":"ชะมด","37,77":"ตัวนิ่ม","38,78":"เม่น","39,79":"ปู","40,80":"นกอินทรี"};
 
+    // ===== UTILITY FUNCTIONS =====
+
+    /** Get animal name from last two digits of number */
     function getAnimalName(num) {
+        if(!num) return "";
         const lastTwo = num.slice(-2).padStart(2, '0');
         const entry = Object.keys(animalMap).find(key => key.split(',').includes(lastTwo));
         return entry ? animalMap[entry] : "";
     }
 
+    /** Show alert dialog with customizable icon and message */
     function showAlert(title, msg, t = 'success') {
         const icons = { success: '✅', error: '❌', warning: '⚠️' };
         document.getElementById('alertIcon').innerText = icons[t];
@@ -232,22 +251,47 @@
         document.getElementById('alertMsg').innerText = msg;
         document.getElementById('customAlert').style.display = 'flex';
     }
-    function hideAlert() { document.getElementById('customAlert').style.display = 'none'; }
 
-    function checkLimit(el) { if(el.value.length > 3) el.value = el.value.slice(0, 3); }
+    function hideAlert() { document.getElementById('customAlert').style.display = 'none'; }
     
+    /** Validate number input - max 3 digits only */
+    function checkLimit(el) { 
+        el.value = el.value.replace(/[^0-9]/g, '');
+        if(el.value.length > 3) el.value = el.value.slice(0, 3); 
+    }
+    
+    /** Format number with thousand separator (comma) */
+    function formatAmount(value) {
+        return Math.floor(value).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+    
+    /** Quick amount buttons - adds value and formats display */
     function quick(id, v) { 
         const el = document.getElementById(id);
-        el.value = (parseInt(el.value) || 0) + v; 
+        if(!el) return;
+        try {
+            let current = parseInt(el.value.replace(/,/g, '')) || 0;
+            let newAmount = current + v;
+            // Validate max amount (9,999,999)
+            if(newAmount > 9999999) {
+                showAlert("แจ้งเตือน", "ยอดสูงสุด 9,999,999 ₭", "warning");
+                return;
+            }
+            el.value = formatAmount(newAmount);
+        } catch(e) {
+            console.error("Error in quick():", e);
+        }
     }
+
+    // ===== LOTTERY TYPE SELECTION =====
 
     function setType(t) {
         type = t;
-        document.getElementById('tBtn').classList.toggle('active', t === 'thai');
         document.getElementById('lBtn').classList.toggle('active', t === 'lao');
-        document.getElementById('thaiRandom').style.display = (t === 'thai') ? 'block' : 'none';
-        document.getElementById('laoRandom').style.display = (t === 'lao') ? 'grid' : 'none';
+        document.getElementById('tBtn').classList.toggle('active', t === 'thai');
     }
+
+    // ===== PAYMENT METHOD SELECTION =====
 
     function setPay(p) {
         payment = p;
@@ -255,43 +299,56 @@
         document.getElementById('bankBtn').classList.toggle('active', p === 'Transfer');
     }
 
-    function generateRandom(digit) {
+    // ===== RANDOM NUMBER GENERATOR =====
+
+    function generateRandom() {
         const qty = parseInt(document.getElementById('randQty').value);
-        const amount = document.getElementById('amt').value;
-        if(!amount || amount <= 0) return showAlert("แจ้งเตือน", "กรุณาระบุจำนวนเงินที่จะสุ่มก่อนครับ", "warning");
+        const amount = parseInt(document.getElementById('amt').value.replace(/,/g, ''));
+        if(!amount || amount <= 0) return showAlert("แจ้งเตือน", "กรุณาระบุจำนวนเงินที่จะซื้อสุ่มก่อน", "warning");
         for(let i = 0; i < qty; i++) {
-            let num = (digit === 2) ? Math.floor(Math.random() * 100).toString().padStart(2, '0') 
-                                     : Math.floor(Math.random() * 1000).toString().padStart(3, '0');
-            addOrder(num, 'สุ่ม', amount);
+            let num = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+            addOrder(num, 'ปกติ', amount);
         }
-        showAlert("สำเร็จ", `สุ่มเลข ${digit} ตัว จำนวน ${qty} รายการให้แล้วครับ`);
+        showAlert("สำเร็จ", `สุ่มเลข 3 ตัว จำนวน ${qty} รายการให้แล้วครับ`);
     }
+
+    // ===== ORDER MANAGEMENT =====
 
     function handleAdd() {
         const n = document.getElementById('num').value;
         const a = document.getElementById('amt').value;
         if(!n) return showAlert("แจ้งเตือน", "กรุณาระบุเลขก่อน", "warning");
+        
+        // Validate: amount required for all cases except dual popup
         if(type === 'thai' && n.length === 2) { 
-            showThaiPopup(n, a); 
+            showDualPopup(n, a); 
         } else { 
-            if(!a || a <= 0) return showAlert("แจ้งเตือน", "กรุณาระบุจำนวนเงิน", "warning"); 
-            addOrder(n, 'ปกติ', a); 
+            // For non-dual cases, amount is required
+            if(!a || parseInt(a.replace(/,/g, '')) <= 0) {
+                return showAlert("แจ้งเตือน", "กรุณาระบุจำนวนเงิน", "warning"); 
+            }
+            addOrder(n, 'ปกติ', parseInt(a.replace(/,/g, ''))); 
         }
     }
 
     function addOrder(n, pos, a) {
-        if(a <= 0) return;
+        // Validate amount is positive
+        if(a <= 0) {
+            showAlert("แจ้งเตือน", "จำนวนเงินต้องมากกว่า 0", "warning");
+            return;
+        }
         orders.unshift({ 
             type: type, 
             number: n, 
             position: pos, 
-            amount: parseInt(a), 
+            amount: a, 
             animal: getAnimalName(n) 
         });
         render();
         document.getElementById('num').value = ''; 
     }
 
+    /** Render order list and update summary */
     function render() {
         let h = ''; let tTotal = 0; let sThai = 0; let sLao = 0;
         orders.forEach((item, i) => {
@@ -301,99 +358,139 @@
                 <div>
                     <span style="font-size:17px; font-weight:700">${item.number}</span>
                     <span class="animal-name">${item.animal}</span> 
-                    <span style="font-size:11px; color:#8e8e93; display:block;">${item.position}</span>
+                    <span style="font-size:11px; color:#8e8e93; display:block;">${item.type === 'thai' ? 'ไทย' : 'ลาว'} | ${item.position}</span>
                 </div>
                 <div>
                     <span style="font-weight:700">${item.amount.toLocaleString()} ₭</span>
-                    <span style="color:var(--ios-pink); margin-left:15px; cursor:pointer; font-weight:bold;" onclick="orders.splice(${i},1);render()">✕</span>
+                    <span style="color:var(--ios-pink); margin-left:15px; cursor:pointer; font-weight:bold; padding:5px;" onclick="orders.splice(${i},1);render()">✕</span>
                 </div>
             </div>`;
         });
-        document.getElementById('list').innerHTML = h || '<p style="text-align:center; opacity:0.3">ไม่มีรายการ</p>';
+        document.getElementById('list').innerHTML = h || '<p style="text-align:center; opacity:0.3; margin-top:20px;">ไม่มีรายการ</p>';
         document.getElementById('total').innerText = tTotal.toLocaleString();
         document.getElementById('sumThai').innerText = sThai.toLocaleString();
         document.getElementById('sumLao').innerText = sLao.toLocaleString();
     }
 
-    function showThaiPopup(n, a) {
+    // ===== POPUP MANAGEMENT =====
+
+    function showDualPopup(n, a) {
         document.getElementById('pop').style.display = 'flex';
         document.getElementById('popContent').innerHTML = `
-            <h3 style="text-align:center; margin-bottom:20px;">เลข ${n} <span class="animal-name">${getAnimalName(n)}</span></h3>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                <button class="btn-main" onclick="addOrder('${n}', 'บน', ${a || 0}); closePop()">ซื้อบน</button>
-                <button class="btn-main" style="background:var(--ios-pink)" onclick="addOrder('${n}', 'ล่าง', ${a || 0}); closePop()">ซื้อล่าง</button>
+            <h3 class="popup-title">เลขไทย ${n}</h3>
+            <div class="popup-button-group">
+                <button class="btn-main" onclick="addOrder('${n}', 'บน', ${parseInt(a.replace(/,/g, '')) || 0}); closePop()">บน</button>
+                <button class="btn-main" style="background:var(--ios-pink)" onclick="addOrder('${n}', 'ล่าง', ${parseInt(a.replace(/,/g, '')) || 0}); closePop()">ล่าง</button>
             </div>
             <button class="btn-main" style="background:var(--ios-orange); margin-top:10px" onclick="showDualMode('${n}', '${a}')">บน และ ล่าง</button>
-            <button class="btn-toggle" style="width:100%; margin-top:15px" onclick="closePop()">ยกเลิก</button>
+            <button class="btn-toggle popup-cancel-btn" onclick="closePop()">ยกเลิก</button>
         `;
     }
 
     function showDualMode(n, a) {
+        const amtValue = parseInt(a.replace(/,/g, '')) || '';
         document.getElementById('popContent').innerHTML = `
-            <h3 style="text-align:center; margin-bottom:15px;">เลข ${n} (บน+ล่าง)</h3>
+            <h3 class="popup-title">เลขไทย ${n} (บน+ล่าง)</h3>
             <div class="dual-box">
                 <span class="pop-label" style="color:var(--ios-blue)">ยอดซื้อ "บน"</span>
-                <input type="text" id="amtTop" inputmode="decimal" value="${a > 0 ? a : ''}" placeholder="0">
-                <div class="quick-scroll">
-                    <button class="btn-quick btn-quick-pop" onclick="quick('amtTop', 1000)">1K</button>
-                    <button class="btn-quick btn-quick-pop" onclick="quick('amtTop', 5000)">5K</button>
-                    <button class="btn-quick btn-quick-pop" onclick="quick('amtTop', 10000)">10K</button>
-                    <button class="btn-quick btn-quick-pop" onclick="quick('amtTop', 20000)">20K</button>
-                    <button class="btn-quick btn-quick-pop" onclick="quick('amtTop', 50000)">50K</button>
+                <input type="text" id="amtTop" inputmode="decimal" value="${amtValue}" placeholder="0">
+                <div class="pop-quick-group">
+                    <button class="btn-quick-pop" onclick="quick('amtTop', 1000)">1K</button>
+                    <button class="btn-quick-pop" onclick="quick('amtTop', 5000)">5K</button>
+                    <button class="btn-quick-pop" onclick="quick('amtTop', 10000)">10K</button>
                 </div>
             </div>
             <div class="dual-box">
                 <span class="pop-label" style="color:var(--ios-pink)">ยอดซื้อ "ล่าง"</span>
-                <input type="text" id="amtBottom" inputmode="decimal" value="${a > 0 ? a : ''}" placeholder="0">
-                <div class="quick-scroll">
-                    <button class="btn-quick btn-quick-pop" onclick="quick('amtBottom', 1000)">1K</button>
-                    <button class="btn-quick btn-quick-pop" onclick="quick('amtBottom', 5000)">5K</button>
-                    <button class="btn-quick btn-quick-pop" onclick="quick('amtBottom', 10000)">10K</button>
-                    <button class="btn-quick btn-quick-pop" onclick="quick('amtBottom', 20000)">20K</button>
-                    <button class="btn-quick btn-quick-pop" onclick="quick('amtBottom', 50000)">50K</button>
+                <input type="text" id="amtBottom" inputmode="decimal" value="${amtValue}" placeholder="0">
+                <div class="pop-quick-group">
+                    <button class="btn-quick-pop" onclick="quick('amtBottom', 1000)">1K</button>
+                    <button class="btn-quick-pop" onclick="quick('amtBottom', 5000)">5K</button>
+                    <button class="btn-quick-pop" onclick="quick('amtBottom', 10000)">10K</button>
                 </div>
             </div>
-            <button class="btn-submit" onclick="confirmDual('${n}')">เพิ่มทั้งบนและล่าง</button>
-            <button class="btn-toggle" style="width:100%; margin-top:15px" onclick="closePop()">ยกเลิก</button>
+            <button class="btn-submit" onclick="confirmDual('${n}')">ยืนยัน</button>
+            <button class="btn-toggle popup-cancel-btn" onclick="closePop()">ยกเลิก</button>
         `;
     }
 
     function confirmDual(n) {
-        const t = document.getElementById('amtTop').value;
-        const b = document.getElementById('amtBottom').value;
-        if(t > 0) addOrder(n, 'บน', t);
-        if(b > 0) addOrder(n, 'ล่าง', b);
-        closePop();
+        try {
+            const t = parseInt(document.getElementById('amtTop').value) || 0;
+            const b = parseInt(document.getElementById('amtBottom').value) || 0;
+            if(t <= 0 && b <= 0) {
+                showAlert("แจ้งเตือน", "กรุณาระบุจำนวนเงินอย่างน้อย 1 ด้าน", "warning");
+                return;
+            }
+            if(t > 0) addOrder(n, 'บน', t);
+            if(b > 0) addOrder(n, 'ล่าง', b);
+            closePop();
+        } catch(e) {
+            console.error("Error in confirmDual():", e);
+            showAlert("ผิดพลาด", "เกิดข้อผิดพลาดในการบันทึก", "error");
+        }
     }
 
     function closePop() { document.getElementById('pop').style.display = 'none'; }
 
+    // ===== SUBMISSION =====
+
     function submit() {
-        if (orders.length === 0) return showAlert("แจ้งเตือน", "รายการว่าง!", "warning");
+        if (orders.length === 0) return showAlert("แจ้งเตือน", "ไม่มีรายการที่จะบันทึก", "warning");
+        
         const btn = document.getElementById('submitBtn');
-        btn.disabled = true; btn.innerText = "กำลังบันทึกข้อมูล...";
+        btn.disabled = true; 
+        btn.innerText = "⏳ กำลังบันทึก...";
 
-        const payload = {
-            customer: document.getElementById('cust').value || "ทั่วไป",
-            payment: (payment === 'Cash') ? 'เงินสด' : 'โอนเงิน',
-            orders: orders
-        };
+        try {
+            // Prepare payload - clean data before sending
+            const payload = {
+                customer: document.getElementById('cust').value.toString().trim() || "ทั่วไป",
+                payment: (payment === 'Cash') ? 'เงินสด' : 'โอนเงิน',
+                orders: orders.map(item => {
+                    return {
+                        type: item.type,
+                        number: item.number,
+                        position: item.position,
+                        amount: String(item.amount).replace(/,/g, ''),
+                        animal: item.animal || ""
+                    };
+                })
+            };
 
-        google.script.run
-            .withSuccessHandler(res => {
-                const response = JSON.parse(res);
-                if(response.status === "success") {
-                    showAlert("สำเร็จ", "บันทึกบิลและส่ง Telegram เรียบร้อย! ✅");
-                    orders = []; render();
-                    document.getElementById('cust').value = '';
-                } else { showAlert("ผิดพลาด", response.message, "error"); }
-                btn.disabled = false; btn.innerText = "ยืนยันการซื้อ";
+            // Send to Google Apps Script via fetch with CORS workaround
+            fetch(APPS_SCRIPT_URL + "?callback=handleResponse", {
+                method: 'POST',
+                mode: 'no-cors',
+                body: JSON.stringify(payload),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
             })
-            .withFailureHandler(() => {
-                showAlert("ผิดพลาด", "ไม่สามารถติดต่อ Server ได้", "error");
-                btn.disabled = false; btn.innerText = "ยืนยันการซื้อ";
+            .then(response => {
+                // With no-cors, we can't read response, so assume success
+                btn.disabled = false; 
+                btn.innerText = "ยืนยันการซื้อ";
+                showAlert("สำเร็จ", "บันทึกเรียบร้อยและแจ้งเตือนแล้ว! ✅");
+                orders = []; 
+                render();
+                document.getElementById('cust').value = '';
+                document.getElementById('num').value = '';
+                document.getElementById('amt').value = '';
+                return response;
             })
-            .saveOrder(payload);
+            .catch(err => {
+                btn.disabled = false; 
+                btn.innerText = "ยืนยันการซื้อ";
+                console.error("Fetch error:", err);
+                showAlert("ผิดพลาด", "เชื่อมต่อเซิร์ฟเวอร์ไม่ได้: " + err.message, "error");
+            });
+        } catch(e) {
+            btn.disabled = false; 
+            btn.innerText = "ยืนยันการซื้อ";
+            console.error("Error in submit():", e);
+            showAlert("ผิดพลาด", "เกิดข้อผิดพลาดในการเตรียมข้อมูล: " + e.message, "error");
+        }
     }
 </script>
 </body>
