@@ -481,21 +481,23 @@
         try {
             const lines = [];
             lines.push("🔔 รายการสั่งซื้อใหม่");
-            lines.push("");
             lines.push(`👤 ลูกค้า: ${document.getElementById('cust').value || "ทั่วไป"}`);
-            lines.push(`💳 ชำระ: ${payment === 'Cash' ? 'เงินสด' : 'โอนเงิน'}`);
-            lines.push("");
-            lines.push("รายการ:");
+            lines.push('─────────────');
+            lines.push('เลข  │ หวย │ ชุด  │ จำนวน');
+            lines.push('─────────────');
 
             orders.forEach(item => {
                 const icon = item.type === 'thai' ? '🇹🇭' : '🇱🇦';
-                // compact single-line per item to avoid wrapping
-                lines.push(`${icon} ${item.number} (${item.position}) - ${item.amount.toLocaleString()} ₭${item.animal ? ' ['+item.animal+']' : ''}`);
+                const numPad = item.number.padEnd(4);
+                const posPad = item.position.padEnd(4);
+                lines.push(`${numPad} | ${icon} | ${posPad} | ${item.amount.toLocaleString()}`);
             });
 
             const tTotal = orders.reduce((s, it) => s + it.amount, 0);
-            lines.push("");
-            lines.push(`💰 รวม: ${tTotal.toLocaleString()} ₭`);
+            lines.push('─────────────');
+            lines.push('');
+            lines.push(`💰 รวมเงิน: ${tTotal.toLocaleString()} ₭`);
+            lines.push(`💳 ชำระ: ${payment === 'Cash' ? 'เงินสด' : 'โอนเงิน'}`);
             lines.push(`⏰ เวลา: ${new Date().toLocaleString('th-TH')}`);
 
             const text = lines.join('\n');
@@ -573,20 +575,23 @@
         try {
             const lines = [];
             lines.push('🔔 รายการสั่งซื้อใหม่');
-            lines.push('');
             lines.push(`👤 ลูกค้า: ${document.getElementById('cust').value || 'ทั่วไป'}`);
-            lines.push(`💳 ชำระ: ${payment === 'Cash' ? 'เงินสด' : 'โอนเงิน'}`);
-            lines.push('');
-            lines.push('รายการ:');
+            lines.push('─────────────');
+            lines.push('เลข  │ หวย │ ชุด  │ จำนวน');
+            lines.push('─────────────');
 
             orders.forEach(item => {
                 const icon = item.type === 'thai' ? '🇹🇭' : '🇱🇦';
-                lines.push(`${icon} ${item.number} (${item.position}) - ${item.amount.toLocaleString()} ₭${item.animal ? ' ['+item.animal+']' : ''}`);
+                const numPad = item.number.padEnd(4);
+                const posPad = item.position.padEnd(4);
+                lines.push(`${numPad} | ${icon} | ${posPad} | ${item.amount.toLocaleString()}`);
             });
 
             const tTotal = orders.reduce((s, it) => s + it.amount, 0);
+            lines.push('─────────────');
             lines.push('');
-            lines.push(`💰 รวม: ${tTotal.toLocaleString()} ₭`);
+            lines.push(`💰 รวมเงิน: ${tTotal.toLocaleString()} ₭`);
+            lines.push(`💳 ชำระ: ${payment === 'Cash' ? 'เงินสด' : 'โอนเงิน'}`);
             lines.push(`⏰ เวลา: ${new Date().toLocaleString('th-TH')}`);
 
             const text = lines.join('\n');
