@@ -371,8 +371,9 @@
         <div class="receipt-title">บันทึกเรียบร้อย</div>
         <div id="receiptContent"></div>
         <div class="receipt-button-group">
-            <button type="button" class="receipt-button receipt-close-btn" onclick="closeReceipt()">ปิด</button>
-        </div>
+    <button type="button" class="receipt-button receipt-copy-btn" onclick="copyReceiptToClipboard()">คัดลอก</button>
+    <button type="button" class="receipt-button receipt-close-btn" onclick="closeReceipt()">ปิด</button>
+</div>
     </div>
 </div>
 
@@ -451,6 +452,57 @@
         }
     }
 
+    /** ฟังก์ชันคัดลอกข้อมูลใบเสร็จ */
+function copyReceiptToClipboard() {
+    // ตรวจสอบว่ามีข้อมูลในใบเสร็จหรือไม่
+    if (!receiptData || receiptData.orders.length === 0) return;
+
+    let text = `*'งวดนี้รวย'!*\n`;
+    text += `ชื่อ: ${receiptData.customer}\n`;
+    text += `--------------------------\n`;
+
+    let total = 0;
+    receiptData.orders.forEach((item, index) => {
+        const icon = item.type === 'thai' ? '🇹🇭' : '🇱🇦';
+        const animalText = item.animal ? `(${item.animal})` : '';
+        // จัดรูปแบบ: 1. 🇱🇦 20 [--] - 5,000 ₭ 
+        text += `${index + 1}. ${icon} ${item.number} [${item.position}] - ${item.amount.toLocaleString()} \n`;
+        total += item.amount;
+    });
+
+    text += `--------------------------\n`;
+    text += ` *ยอดรวม: ${total.toLocaleString()} ₭*\n`;
+    text += ` ชำระโดย: ${receiptData.payment === 'Cash' ? 'เงินสด' : 'โอนเงิน'}\n`;
+    text += ` เวลาชื้อ: ${new Date().toLocaleString('th-TH')}`;
+
+    // สร้างตัวรองรับการคัดลอก
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    document.body.appendChild(textArea);
+    textArea.select();
+    textArea.setSelectionRange(0, 99999); // สำหรับอุปกรณ์พกพา
+
+    try {
+        const successful = document.execCommand('copy');
+        if (successful) {
+            // แสดงผลที่ปุ่มว่าคัดลอกแล้ว
+            const copyBtn = document.querySelector('.receipt-copy-btn');
+            const originalText = copyBtn.innerText;
+            copyBtn.innerText = "✅ คัดลอกสำเร็จ!";
+            copyBtn.style.background = "#28a745"; // สีเขียวเข้มขึ้น
+            
+            setTimeout(() => {
+                copyBtn.innerText = originalText;
+                copyBtn.style.background = ""; // กลับเป็นสีเดิม
+            }, 2000);
+        }
+    } catch (err) {
+        console.error('ไม่สามารถคัดลอกได้:', err);
+    }
+
+    document.body.removeChild(textArea);
+}
+
     // ===== LOTTERY TYPE SELECTION =====
 
     function setType(t) {
@@ -479,7 +531,7 @@
         if(!amount || amount <= 0) return showAlert("แจ้งเตือน", "กรุณาระบุจำนวนเงินที่จะซื้อสุ่มก่อน", "warning");
         for(let i = 0; i < qty; i++) {
             let num = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
-            addOrder(num, 'ปกติ', amount);
+            addOrder(num, '--', amount);
         }
         showAlert("สำเร็จ", `สุ่มเลข 3 ตัว จำนวน ${qty} รายการให้แล้วครับ`);
     }
@@ -500,7 +552,7 @@
             if(!amt || amt <= 0) {
                 return showAlert("แจ้งเตือน", "กรุณาระบุจำนวนเงิน", "warning"); 
             }
-            addOrder(n, 'ปกติ', parseInt(a.replace(/,/g, ''))); 
+            addOrder(n, '--', parseInt(a.replace(/,/g, ''))); 
         }
     }
 
@@ -727,6 +779,14 @@
     }
 </script>
 <script>
+
+    window.addEventListener('load', () => {
+    setTimeout(() => {
+        const splash = document.getElementById('splashScreen');
+        if(splash) splash.classList.add('fade-out');
+    }, 1000);
+});
+
 // Splash Screen Logic
 window.addEventListener('load', function() {
     const splashScreen = document.getElementById('splashScreen');
